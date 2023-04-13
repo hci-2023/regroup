@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "519595634736",
+    "project_id": "regroup-c4089",
+    "storage_bucket": "regroup-c4089.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519595634736:android:e8246d2ec815c3c5c7bdf5",
+        "android_client_info": {
+          "package_name": "com.example.regroup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519595634736-m51ktu0nshpilu8sklg4qgcpvubmilsn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9L7ion2CHUr8dlEl7p0D6iX8XhzT_W_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519595634736-m51ktu0nshpilu8sklg4qgcpvubmilsn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "519595634736-n1mue9gkt228d0hof55u46n51unq2mav.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.regroup"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
