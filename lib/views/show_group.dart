@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -20,8 +21,7 @@ import 'dart:async';
 class ShowGroup extends StatefulWidget {
   final String groupId;
   final String userId;
-  const ShowGroup({Key? key, required this.groupId, required this.userId})
-      : super(key: key);
+  const ShowGroup({Key? key, required this.groupId, required this.userId}) : super(key: key);
 
   @override
   State<ShowGroup> createState() => _ShowGroupState();
@@ -119,7 +119,7 @@ class _ShowGroupState extends State<ShowGroup> {
 
   void kickFromGroup() {
     showSnack(context, "The group was deleted");
-    Navigator.pushReplacementNamed(context, "/");
+    Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
   }
 
   //cambia il nome del dispositivo bluetooth per ora non usato
@@ -199,8 +199,7 @@ class _ShowGroupState extends State<ShowGroup> {
 
   bool _showLinearProgressIndicator = true;
 
-  final boldStyle =
-      const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
+  final boldStyle = const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
@@ -215,10 +214,8 @@ class _ShowGroupState extends State<ShowGroup> {
                   builder: (context) => AlertDialog(
                         title: const Text('Leave the group'),
                         content: SingleChildScrollView(
-                            child: ListBody(children: const <Widget>[
-                          Text(
-                              'In order to return to the previous screen, you must first leave or delete the group.')
-                        ])),
+                            child: ListBody(
+                                children: const <Widget>[Text('In order to return to the previous screen, you must first leave or delete the group.')])),
                         actions: <Widget>[
                           TextButton(
                             child: const Text('Close'),
@@ -252,8 +249,7 @@ class _ShowGroupState extends State<ShowGroup> {
                           snapshotUsers.data != null &&
                           snapshotUsers.data != null &&
                           snapshotGroup.data!.data() != null) {
-                        Map<String, dynamic> groupInfo =
-                            snapshotGroup.data!.data() as Map<String, dynamic>;
+                        Map<String, dynamic> groupInfo = snapshotGroup.data!.data() as Map<String, dynamic>;
                         return Column(
                           children: [
                             const SizedBox(height: 20),
@@ -262,8 +258,7 @@ class _ShowGroupState extends State<ShowGroup> {
                               children: [
                                 Card(
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
                                   ),
                                   child: SizedBox(
                                       child: Padding(
@@ -275,21 +270,15 @@ class _ShowGroupState extends State<ShowGroup> {
                                           color: Colors.blue,
                                         ),
                                         const SizedBox(width: 10),
-                                        Text(
-                                            'ID: ${groupInfo["accessIdentifier"]}')
+                                        Text('ID: ${groupInfo["accessIdentifier"]}')
                                       ],
                                     ),
                                   )),
                                 ),
                                 IconButton(
                                     onPressed: () async {
-                                      await Clipboard.setData(ClipboardData(
-                                              text:
-                                                  groupInfo["accessIdentifier"]
-                                                      .toString()))
-                                          .then((_) {
-                                        showSnack(context,
-                                            "Group id copied to clipboard");
+                                      await Clipboard.setData(ClipboardData(text: groupInfo["accessIdentifier"].toString())).then((_) {
+                                        showSnack(context, "Group id copied to clipboard");
                                       });
                                       // copied successfully
                                     },
@@ -301,11 +290,7 @@ class _ShowGroupState extends State<ShowGroup> {
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ShareGroup(
-                                                qrCodeData: groupInfo[
-                                                        "accessIdentifier"]
-                                                    .toString())),
+                                        MaterialPageRoute(builder: (context) => ShareGroup(qrCodeData: groupInfo["accessIdentifier"].toString())),
                                       );
                                     },
                                     icon: const Icon(
@@ -368,50 +353,52 @@ class _ShowGroupState extends State<ShowGroup> {
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: Text(isOwner
-                                              ? 'Delete group'
-                                              : "Leave group"),
+                                          title: Text(isOwner ? 'Delete group' : "Leave group"),
                                           content: Text(isOwner
                                               ? 'Are you really sure you want to eliminate the group?'
                                               : "Are you really sure you want to leave the group?"),
                                           actions: [
                                             TextButton(
                                               child: const Text("Cancel"),
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
+                                              onPressed: () => Navigator.pop(context),
                                             ),
                                             TextButton(
                                                 child: const Text("Ok"),
                                                 onPressed: () async {
                                                   setState(() {
-                                                    _showLinearProgressIndicator =
-                                                        true;
+                                                    _showLinearProgressIndicator = true;
                                                   });
 
                                                   if (isOwner) {
-                                                    await groupRepository
-                                                        .deleteGroup();
+                                                    HttpsCallableResult<dynamic>? response = await groupRepository.deleteGroup();
+                                                    int? status;
+
+                                                    if (response != null) {
+                                                      if (response.data.containsKey("status")) {
+                                                        status = response.data["status"];
+                                                      }
+                                                    }
+
+                                                    if (response == null || status != 200) {
+                                                      if (context.mounted) {
+                                                        showSnack(context, "The group could not be removed, please try again in a few moments",
+                                                            durationInMilliseconds: 1500);
+                                                      }
+                                                    }
                                                   } else {
-                                                    await userRepository
-                                                        .deleteUser(
-                                                            widget.userId);
+                                                    await userRepository.deleteUser(widget.userId);
                                                   }
                                                 })
                                           ],
                                         );
                                       });
                                 },
-                                child: Text(
-                                    isOwner
-                                        ? "Delete group"
-                                        : "Leave the group",
+                                child: Text(isOwner ? "Delete group" : "Leave the group",
                                     style: const TextStyle(
                                       fontSize: 20,
                                       color: Colors.white,
                                     ))),
-                            Expanded(
-                                child: _buildList(
-                                    context, snapshotUsers.data?.docs ?? [])),
+                            Expanded(child: _buildList(context, snapshotUsers.data?.docs ?? [])),
                           ],
                         );
                       }
@@ -426,36 +413,25 @@ class _ShowGroupState extends State<ShowGroup> {
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot>? snapshot) {
     if (snapshot != null && snapshot.isNotEmpty) {
-      var currentUser =
-          snapshot.firstWhereOrNull((element) => element.id == widget.userId);
+      var currentUser = snapshot.firstWhereOrNull((element) => element.id == widget.userId);
 
       if (currentUser != null) {
         var userInfo = currentUser.data() as Map<dynamic, dynamic>;
         var currentUserRole = userInfo['role'];
 
-        List<UserCard> usersCard = snapshot
-            .map((data) => _buildListItem(context, data, currentUserRole))
-            .toList();
+        List<UserCard> usersCard = snapshot.map((data) => _buildListItem(context, data, currentUserRole)).toList();
         usersCard.sort((a, b) => a.order.compareTo(b.order));
 
-        return ListView(
-            padding: const EdgeInsets.only(top: 20.0),
-            shrinkWrap: true,
-            children: usersCard);
+        return ListView(padding: const EdgeInsets.only(top: 20.0), shrinkWrap: true, children: usersCard);
       }
     }
 
     return const SizedBox.shrink();
   }
 
-  UserCard _buildListItem(
-      BuildContext context, DocumentSnapshot snapshot, String currentUserRole) {
+  UserCard _buildListItem(BuildContext context, DocumentSnapshot snapshot, String currentUserRole) {
     final user = GroupUser.fromSnapshot(snapshot);
 
-    return UserCard(
-        user: user,
-        groupId: widget.groupId,
-        currentUserRole: currentUserRole,
-        boldStyle: boldStyle);
+    return UserCard(user: user, groupId: widget.groupId, currentUserRole: currentUserRole, boldStyle: boldStyle);
   }
 }
