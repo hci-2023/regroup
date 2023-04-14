@@ -1,55 +1,27 @@
-
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+const firebaseTools = require("firebase-tools");
 
-admin.initializeApp();
-
-const firestore = admin.firestore();
-
-const MAX_RETRY_ATTEMPTS = 3;
+// For setting a fb.token
+// firebase login:ci (this command will generate a token)
+// firebase functions:config:set fb.token='TOKEN FROM THE PREVIOUS COMMAND'
 
 exports.recursiveDelete = functions
     .runWith({
       timeoutSeconds: 30,
       memory: "128MB",
     })
-    .https.onCall(async (req, res) => {
-    // See: https://firebase.google.com/docs/firestore/solutions/delete-collections?hl=it#cloud_function
-    // TODO: catch error
-      const docId = req.docId;
+    .https.onCall(async (data, context) => {
+      const path = data.path;
 
-      let response = true;
-
-      const documentRef = firestore
-          .collection("groups")
-          .doc(docId);
-
-      const bulkWriter = firestore.bulkWriter();
-      bulkWriter
-          .onWriteError((error) => {
-            if (
-              error.failedAttempts < MAX_RETRY_ATTEMPTS
-            ) {
-              return true;
-            } else {
-              console.log("[recursiveDelete] Failed write at document: ",
-                  error.documentRef.path);
-              response = false;
-              return false;
-            }
+      await firebaseTools.firestore
+          .delete(path, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            force: true,
+            token: functions.config().fb.token,
           });
 
-
-      await firestore.recursiveDelete(documentRef, bulkWriter);
-
-      if (response) {
-        return {
-          "status": 200,
-        };
-      } else {
-        return {
-          "status": 500,
-        };
-      }
-    },
-    );
+      return {
+        path: path,
+      };
+    });
