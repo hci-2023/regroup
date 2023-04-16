@@ -17,14 +17,24 @@ class GroupRepository {
     return document.set(group.toJson());
   }
 
-  Future<void> deleteGroup() async {
+  Future<bool> deleteGroup() async {
     // See: https://firebase.google.com/docs/firestore/solutions/delete-collections?hl=it
-    await FirebaseFunctions.instance
-        .httpsCallable('recursiveDelete')
-        .call({"docId": docId}).then((value) {
-      print(value);
-    }).catchError((err) {
-      print('[deleteGroup] failed: $err');
-    });
+
+    bool success = true;
+    String path = document.path;
+
+    try {
+      await FirebaseFunctions.instance
+          .httpsCallable('recursiveDelete')
+          .call({"path": path});
+    } on FirebaseFunctionsException catch (error) {
+      success = false;
+      print("[deleteGroup] Delete failed");
+      print(error.code);
+      print(error.details);
+      print(error.message);
+    }
+
+    return success;
   }
 }

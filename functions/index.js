@@ -1,20 +1,27 @@
-
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+const firebaseTools = require("firebase-tools");
 
-admin.initializeApp();
+// For setting a fb.token
+// firebase login:ci (this command will generate a token)
+// firebase functions:config:set fb.token='TOKEN FROM THE PREVIOUS COMMAND'
 
-const firestore = admin.firestore();
+exports.recursiveDelete = functions
+    .runWith({
+      timeoutSeconds: 30,
+      memory: "128MB",
+    })
+    .https.onCall(async (data, context) => {
+      const path = data.path;
 
-exports.recursiveDelete = functions.https.onCall(async (req, res) => {
-  // See: https://firebase.google.com/docs/firestore/solutions/delete-collections?hl=it#cloud_function
-  // TODO: catch error
-  const docId = req.docId;
+      await firebaseTools.firestore
+          .delete(path, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            force: true,
+            token: functions.config().fb.token,
+          });
 
-  const documentRef = firestore
-      .collection("groups")
-      .doc(docId);
-
-  firestore.recursiveDelete(documentRef);
-},
-);
+      return {
+        path: path,
+      };
+    });

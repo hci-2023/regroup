@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -119,7 +120,7 @@ class _ShowGroupState extends State<ShowGroup> {
 
   void kickFromGroup() {
     showSnack(context, "The group was deleted");
-    Navigator.pushReplacementNamed(context, "/");
+    Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
   }
 
   //cambia il nome del dispositivo bluetooth per ora non usato
@@ -389,12 +390,30 @@ class _ShowGroupState extends State<ShowGroup> {
                                                   });
 
                                                   if (isOwner) {
-                                                    await groupRepository
-                                                        .deleteGroup();
+                                                    bool response =
+                                                        await groupRepository
+                                                            .deleteGroup();
+
+                                                    if (response == false) {
+                                                      if (context.mounted) {
+                                                        Navigator.pop(context);
+                                                        showSnack(context,
+                                                            "The group could not be removed, please try again in a few moments",
+                                                            durationInMilliseconds:
+                                                                1500);
+                                                      }
+                                                    }
                                                   } else {
                                                     await userRepository
                                                         .deleteUser(
                                                             widget.userId);
+                                                  }
+
+                                                  if (context.mounted) {
+                                                    setState(() {
+                                                      _showLinearProgressIndicator =
+                                                          false;
+                                                    });
                                                   }
                                                 })
                                           ],
