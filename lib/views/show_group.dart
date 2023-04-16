@@ -1,10 +1,4 @@
-import 'dart:ui';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:regroup/models/user.dart';
 import 'package:regroup/repository/group_repository.dart';
 import 'package:regroup/repository/user_repository.dart';

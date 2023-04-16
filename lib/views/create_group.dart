@@ -214,9 +214,10 @@ class _CreateGroupState extends State<CreateGroup> {
                             (Route<dynamic> route) => false);
                       }
                     } else {
-                      if (context.mounted)
+                      if (context.mounted) {
                         showSnack(
                             context, "It was not possible to create a group");
+                      }
                     }
 
                     if (mounted) {

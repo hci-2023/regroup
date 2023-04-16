@@ -3,6 +3,7 @@ import 'package:regroup/services/secure_local_storage.dart';
 import 'package:regroup/models/secure_local_storage.dart';
 import 'package:regroup/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:regroup/views/allow_permissions.dart';
 
 import '../utils.dart';
 
@@ -81,8 +82,13 @@ class _RegisterPage extends State<RegisterPage> {
                               if (context.mounted) {
                                 context.read<User>().setUsername(username);
 
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    "/allowPermissions", (route) => false);
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AllowPermissions(),
+                                    ),
+                                    (route) => false);
                               }
                             }
                           : null,

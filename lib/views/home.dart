@@ -64,8 +64,9 @@ class _HomePageState extends State<HomePage> {
     FlutterNativeSplash.remove();
 
     if (usernameResponse == null) {
-      if (context.mounted)
+      if (context.mounted) {
         await Navigator.pushReplacementNamed(context, "/intro");
+      }
     } else {
       if (context.mounted) {
         context.read<User>().setUsername(usernameResponse);
