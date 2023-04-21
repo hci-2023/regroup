@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:regroup/models/user.dart';
 import 'package:regroup/repository/user_repository.dart';
@@ -146,6 +147,11 @@ class _JoinGroupState extends State<JoinGroup> {
                           String? groupId = await isValidGroup(
                               int.parse(textFormFieldController.text));
 
+                          await FirebaseMessaging.instance
+                              .setAutoInitEnabled(true);
+                          String? token =
+                              await FirebaseMessaging.instance.getToken();
+
                           print("groupId -> $groupId");
 
                           if (groupId != null) {
@@ -155,7 +161,10 @@ class _JoinGroupState extends State<JoinGroup> {
                               await userRepository.addUser(GroupUser(
                                   deviceId: context.read<User>().deviceId,
                                   username: context.read<User>().username,
-                                  role: UserRole.participant.toShortString()));
+                                  role: UserRole.participant.toShortString(),
+                                  userPhotoUrl:
+                                      context.read<User>().userPhotoLink,
+                                  token: token));
 
                               if (context.mounted) {
                                 await Navigator.pushAndRemoveUntil(

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -82,6 +83,17 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
     await _bluetooth.requestPermissions();
 
     _bluetoothState = await FlutterBluetoothSerial.instance.state;
@@ -89,8 +101,6 @@ class _HomePageState extends State<HomePage> {
     if (!_bluetoothState.isEnabled) {
       await FlutterBluetoothSerial.instance.requestEnable();
     }
-
-    // aggiungi funzione che controlla che il bluetooth sia attivo
 
     String? groupId;
     groupId = await memberStatus(deviceIdResponse);

@@ -50,6 +50,8 @@ dependencies:
   flutter_bluetooth_serial: ^0.4.0
   flutter_scan_bluetooth: ^2.1.2
   flutter_background_service: ^2.4.6
+  firebase_messaging: ^14.4.0
+  flutter_local_notifications: ^12.0.4
   firebase_analytics: ^10.2.0
   overlay_dialog: ^0.2.1
   firebase_storage: ^11.1.0

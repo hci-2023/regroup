@@ -14,27 +14,30 @@ class GroupUser {
   String role;
   String? referenceId;
   String? userPhotoUrl;
+  String? token;
 
   GroupUser(
       {required this.deviceId,
       required this.username,
       required this.role,
       this.referenceId,
-      this.userPhotoUrl});
+      this.userPhotoUrl,
+      this.token});
 
   factory GroupUser.fromJson(Map<String, dynamic> json) {
     return GroupUser(
         deviceId: json['deviceId'],
         username: json["username"],
         role: json["role"],
-        userPhotoUrl: json["userPhotoUrl"] ?? json["userPhotoUrl"]);
+        userPhotoUrl: json["userPhotoUrl"] ?? json["userPhotoUrl"],
+        token: json["token"]);
   }
 
   Map<String, dynamic> toJson() => _toJson();
 
   @override
   String toString() =>
-      'GroupUser<$deviceId;$username;$role${userPhotoUrl ?? ";$userPhotoUrl"}>';
+      'GroupUser<$deviceId;$username;$role${userPhotoUrl ?? ";$userPhotoUrl"};$token>';
 
   factory GroupUser.fromSnapshot(DocumentSnapshot snapshot) {
     final user = GroupUser.fromJson(snapshot.data() as Map<String, dynamic>);
@@ -46,7 +49,8 @@ class GroupUser {
     Map<String, dynamic> userData = {
       'username': username,
       'role': role,
-      'deviceId': deviceId
+      'deviceId': deviceId,
+      'token': token
     };
     if (userPhotoUrl != null) {
       userData['userPhotoUrl'] = userPhotoUrl;

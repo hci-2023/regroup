@@ -37,4 +37,10 @@ class GroupRepository {
 
     return success;
   }
+
+  void checkNeighbours() {
+    FirebaseFunctions.instance
+        .httpsCallable('checkNeighbours')
+        .call({"docId": docId});
+  }
 }
