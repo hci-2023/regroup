@@ -37,6 +37,7 @@ class _ShowGroupState extends State<ShowGroup> {
   late final UserDataRepository userDataRepository;
   late final Stream<DocumentSnapshot<Object?>> groupDataStream;
   late final Stream<QuerySnapshot<Object?>> usersDataStream;
+  late Map<String, dynamic> userInfo;
 
   final List<BluetoothDiscoveryResult> results =
       List<BluetoothDiscoveryResult>.empty(growable: true);
@@ -67,7 +68,7 @@ class _ShowGroupState extends State<ShowGroup> {
   Future<void> onStart(ServiceInstance service) async {
     print("ONSTART");
     DartPluginRegistrant.ensureInitialized();
-    Timer.periodic(Duration(seconds: 30), (timer) {
+    Timer.periodic(const Duration(seconds: 30), (timer) {
       restartDiscovery();
     });
   }
@@ -87,6 +88,8 @@ class _ShowGroupState extends State<ShowGroup> {
       if (!snapshot.exists) {
         timerDiscovery.cancel();
         kickFromGroup();
+      } else {
+        userInfo = snapshot.data() as Map<String, dynamic>;
       }
     }, onError: (error) {
       //print(error);
@@ -367,74 +370,90 @@ class _ShowGroupState extends State<ShowGroup> {
                             ),
                             const SizedBox(height: 25),
                             */
-                            ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(isOwner
-                                              ? 'Delete group'
-                                              : "Leave group"),
-                                          content: Text(isOwner
-                                              ? 'Are you really sure you want to eliminate the group?'
-                                              : "Are you really sure you want to leave the group?"),
-                                          actions: [
-                                            TextButton(
-                                              child: const Text("Cancel"),
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                            ),
-                                            TextButton(
-                                                child: const Text("Ok"),
-                                                onPressed: () async {
-                                                  setState(() {
-                                                    _showLinearProgressIndicator =
-                                                        true;
-                                                  });
+                            AbsorbPointer(
+                              absorbing: !isOwner && userInfo['lost'],
+                              child: ElevatedButton(
+                                  onPressed: !isOwner && userInfo['lost']
+                                      ? null
+                                      : () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text(isOwner
+                                                      ? 'Delete group'
+                                                      : "Leave group"),
+                                                  content: Text(isOwner
+                                                      ? 'Are you really sure you want to eliminate the group?'
+                                                      : "Are you really sure you want to leave the group?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      child:
+                                                          const Text("Cancel"),
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                    ),
+                                                    TextButton(
+                                                        child: const Text("Ok"),
+                                                        onPressed: () async {
+                                                          setState(() {
+                                                            _showLinearProgressIndicator =
+                                                                true;
+                                                          });
 
-                                                  if (isOwner) {
-                                                    bool response =
-                                                        await groupRepository
-                                                            .deleteGroup();
+                                                          if (isOwner) {
+                                                            bool response =
+                                                                await groupRepository
+                                                                    .deleteGroup();
 
-                                                    if (response == false) {
-                                                      if (context.mounted) {
-                                                        Navigator.pop(context);
-                                                        showSnack(context,
-                                                            "The group could not be removed, please try again in a few moments",
-                                                            durationInMilliseconds:
-                                                                1500);
-                                                      }
-                                                    }
-                                                  } else {
-                                                    await userRepository
-                                                        .deleteUser(
-                                                            widget.userId);
-                                                  }
+                                                            if (response ==
+                                                                false) {
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                showSnack(
+                                                                    context,
+                                                                    "The group could not be removed, please try again in a few moments",
+                                                                    durationInMilliseconds:
+                                                                        1500);
+                                                              }
+                                                            }
+                                                          } else {
+                                                            await userRepository
+                                                                .deleteUser(
+                                                                    widget
+                                                                        .userId);
+                                                            await deletePhoto(
+                                                                widget.userId);
+                                                          }
 
-                                                  if (context.mounted) {
-                                                    setState(() {
-                                                      _showLinearProgressIndicator =
-                                                          false;
-                                                    });
-                                                  }
-                                                })
-                                          ],
-                                        );
-                                      });
-                                },
-                                child: Text(
-                                    isOwner
-                                        ? "Delete group"
-                                        : "Leave the group",
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ))),
+                                                          if (context.mounted) {
+                                                            setState(() {
+                                                              _showLinearProgressIndicator =
+                                                                  false;
+                                                            });
+                                                          }
+                                                        })
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                  child: Text(
+                                      isOwner
+                                          ? "Delete group"
+                                          : "Leave the group",
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                      ))),
+                            ),
                             Expanded(
                                 child: _buildList(
-                                    context, snapshotUsers.data?.docs ?? [])),
+                                    context,
+                                    snapshotUsers.data?.docs ?? [],
+                                    groupInfo['showPhotos'])),
                           ],
                         );
                       }
@@ -447,7 +466,8 @@ class _ShowGroupState extends State<ShowGroup> {
     );
   }
 
-  Widget _buildList(BuildContext context, List<DocumentSnapshot>? snapshot) {
+  Widget _buildList(
+      BuildContext context, List<DocumentSnapshot>? snapshot, bool showPhotos) {
     if (snapshot != null && snapshot.isNotEmpty) {
       var currentUser =
           snapshot.firstWhereOrNull((element) => element.id == widget.userId);
@@ -457,9 +477,10 @@ class _ShowGroupState extends State<ShowGroup> {
         var currentUserRole = userInfo['role'];
 
         List<UserCard> usersCard = snapshot
-            .map((data) => _buildListItem(context, data, currentUserRole))
+            .map((data) =>
+                _buildListItem(context, data, currentUserRole, showPhotos))
             .toList();
-        usersCard.sort((a, b) => a.order.compareTo(b.order));
+        usersCard.sort((a, b) => a.userOrder.compareTo(b.userOrder));
 
         return ListView(
             padding: const EdgeInsets.only(top: 20.0),
@@ -471,14 +492,15 @@ class _ShowGroupState extends State<ShowGroup> {
     return const SizedBox.shrink();
   }
 
-  UserCard _buildListItem(
-      BuildContext context, DocumentSnapshot snapshot, String currentUserRole) {
+  UserCard _buildListItem(BuildContext context, DocumentSnapshot snapshot,
+      String currentUserRole, bool showPhoto) {
     final user = GroupUser.fromSnapshot(snapshot);
 
     return UserCard(
         user: user,
         groupId: widget.groupId,
         currentUserRole: currentUserRole,
+        showPhoto: showPhoto,
         boldStyle: boldStyle);
   }
 }

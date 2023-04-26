@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class User with ChangeNotifier {
   String username = "";
   String deviceId = "";
   String? userPhotoLink;
+  File? userPhoto;
 
   String get getUsername => username;
 
@@ -19,10 +22,10 @@ class User with ChangeNotifier {
     notifyListeners();
   }
 
-  String? get getUserPhotoLink => userPhotoLink;
+  File? get getUserPhoto => userPhoto;
 
-  void setUserPhotoLink(String url) {
-    userPhotoLink = url;
+  void setUserPhoto(File? photo) {
+    userPhoto = photo;
     notifyListeners();
   }
 }

@@ -2,16 +2,41 @@
 const functions = require("firebase-functions");
 const firebaseTools = require("firebase-tools");
 const admin = require("firebase-admin");
-admin.initializeApp();
+const app = admin.initializeApp();
 
 
 exports.recursiveDelete = functions
   .runWith({
     timeoutSeconds: 30,
-    memory: "128MB",
+    memory: "512MB",
   })
   .https.onCall(async (data, context) => {
     const path = data.path;
+
+    let users = await admin.firestore().doc(path).collection("users").get();
+
+    if (!users.empty) {
+      const bucket = app.storage().bucket();
+
+      users.forEach(async (user) => {
+        userData = user.data();
+        console.log(userData);
+
+        if ("userPhotoUrl" in userData) {
+          const photoPath = `images/${userData["deviceId"]}.jpg`;
+          const photoFile = bucket.file(photoPath);
+
+          try {
+            await photoFile.delete();
+            console.log(`File deleted successfully in path: ${photoPath}`);
+          } catch (error) {
+            console.log(`File NOT deleted: ${photoPath}`);
+            console.log(`error: ${error}`);
+          }
+        }
+      });
+
+    }
 
     await firebaseTools.firestore
       .delete(path, {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:regroup/models/group.dart';
@@ -30,6 +32,7 @@ class _CreateGroupState extends State<CreateGroup> {
   final String title = "Create Group";
   GroupType _groupType = GroupType.bluetooth;
   double _distance = 50;
+  bool showPhotos = true;
   bool _showLinearProgressIndicator = false;
 
   @override
@@ -40,7 +43,16 @@ class _CreateGroupState extends State<CreateGroup> {
       if (context.mounted) {
         String deviceId = context.read<User>().deviceId;
         String username = context.read<User>().username;
-        String? userPhotoUrl = context.read<User>().userPhotoLink;
+        File? userPhoto = context.read<User>().userPhoto;
+        String? userPhotoUrl;
+
+        if (showPhotos && userPhoto != null) {
+          userPhotoUrl = await uploadPhoto(deviceId, userPhoto);
+          if (context.mounted) {
+            context.read<User>().setUserPhoto(null);
+          }
+        }
+
         await FirebaseMessaging.instance.setAutoInitEnabled(true);
         String? token = await FirebaseMessaging.instance.getToken();
 
@@ -48,6 +60,7 @@ class _CreateGroupState extends State<CreateGroup> {
         await groupRepository.addGroup(Group(
             groupId: deviceId,
             type: _groupType.toShortString(),
+            showPhotos: showPhotos,
             distance: _groupType == GroupType.gps ? _distance : null));
 
         UserRepository userRepository = UserRepository(deviceId);
@@ -55,6 +68,7 @@ class _CreateGroupState extends State<CreateGroup> {
             deviceId: deviceId,
             username: username,
             role: UserRole.owner.toShortString(),
+            lost: false,
             userPhotoUrl: userPhotoUrl,
             token: token));
 
@@ -198,6 +212,43 @@ class _CreateGroupState extends State<CreateGroup> {
                     ),
                   ),
                 ]),
+              const SizedBox(height: 20),
+              const ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text(
+                  "Show user's photo",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ListTile(
+                  title: const Text('Yes'),
+                  leading: Radio<bool>(
+                    value: true,
+                    groupValue: showPhotos,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        setState(() {
+                          showPhotos = value;
+                        });
+                      }
+                    },
+                  )),
+              ListTile(
+                  title: const Text('No'),
+                  leading: Radio<bool>(
+                    value: false,
+                    groupValue: showPhotos,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        setState(() {
+                          showPhotos = value;
+                        });
+                      }
+                    },
+                  )),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: ElevatedButton(

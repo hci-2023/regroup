@@ -7,6 +7,7 @@ import 'package:regroup/providers/user_provider.dart';
 import 'package:regroup/models/secure_local_storage.dart';
 import 'package:regroup/services/secure_local_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:regroup/utils.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _ProfileWidgetState extends State<Profile> {
   final StorageService _storageService = StorageService();
   final storageRef = FirebaseStorage.instance.ref();
   bool _showLinearProgressIndicator = false;
-  String? userPhotoLink;
+  File? userPhoto;
   String? deviceId;
   var submit = true;
   var lastUsername = "";
@@ -47,7 +48,7 @@ class _ProfileWidgetState extends State<Profile> {
     if (check) {
       _controller.text = context.watch<User>().username;
       deviceId = context.watch<User>().deviceId;
-      userPhotoLink = context.watch<User>().userPhotoLink;
+      userPhoto = context.watch<User>().userPhoto;
       lastUsername = _controller.text;
       check = false;
     }
@@ -97,42 +98,32 @@ class _ProfileWidgetState extends State<Profile> {
                                   color: Colors.white,
                                   shape: BoxShape.circle,
                                 ),
-                                child: userPhotoLink == null
+                                child: userPhoto == null
                                     ? Image.asset(
                                         'assets/profile.png',
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.cover,
                                       )
-                                    : Image.network(
-                                        userPhotoLink!,
-                                        loadingBuilder: (BuildContext context,
-                                            Widget child,
-                                            ImageChunkEvent? loadingProgress) {
+                                    : Image(
+                                        image: FileImage(userPhoto!),
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
                                           if (loadingProgress == null) {
                                             return child;
                                           }
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                          .cumulativeBytesLoaded /
-                                                      loadingProgress
-                                                          .expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          );
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
                                         },
                                         errorBuilder:
                                             (context, error, stackTrace) {
                                           return const Icon(
                                               Icons.error_outline);
                                         },
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
                                       ),
                               ),
                             ),
@@ -164,34 +155,12 @@ class _ProfileWidgetState extends State<Profile> {
                             if (image != null) {
                               imageFile = File(image.path);
 
-                              if (deviceId != null) {
-                                final userPhotoRef =
-                                    storageRef.child("images/$deviceId.jpg");
-
-                                await userPhotoRef
-                                    .putFile(imageFile)
-                                    .then((p0) async {
-                                  if (userPhotoLink == null) {
-                                    String photoUrl =
-                                        await userPhotoRef.getDownloadURL();
-                                    userPhotoLink = photoUrl;
-
-                                    await _storageService.writeSecureData(
-                                        StorageItem('userPhotoLink', photoUrl));
-
-                                    if (context.mounted) {
-                                      context
-                                          .read<User>()
-                                          .setUserPhotoLink(photoUrl);
-                                    }
-                                  }
-
-                                  if (context.mounted) {
-                                    setState(() {
-                                      userPhotoLink = "$userPhotoLink ";
-                                    });
-                                  }
-                                });
+                              if (context.mounted) {
+                                context.read<User>().setUserPhoto(imageFile);
+                                userPhoto = imageFile;
+                                showSnack(context,
+                                    "The photo is disposable, it will only be used for the time it is in the group and subsequently deleted",
+                                    durationInMilliseconds: 3500);
                               }
                             }
 

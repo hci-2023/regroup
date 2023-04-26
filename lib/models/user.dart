@@ -12,6 +12,7 @@ class GroupUser {
   String deviceId;
   String username;
   String role;
+  bool lost;
   String? referenceId;
   String? userPhotoUrl;
   String? token;
@@ -20,6 +21,7 @@ class GroupUser {
       {required this.deviceId,
       required this.username,
       required this.role,
+      required this.lost,
       this.referenceId,
       this.userPhotoUrl,
       this.token});
@@ -29,6 +31,7 @@ class GroupUser {
         deviceId: json['deviceId'],
         username: json["username"],
         role: json["role"],
+        lost: json["lost"],
         userPhotoUrl: json["userPhotoUrl"] ?? json["userPhotoUrl"],
         token: json["token"]);
   }
@@ -47,16 +50,19 @@ class GroupUser {
 
   Map<String, dynamic> _toJson() {
     Map<String, dynamic> userData = {
+      'deviceId': deviceId,
       'username': username,
       'role': role,
-      'deviceId': deviceId,
-      'token': token
+      'lost': lost
     };
     if (userPhotoUrl != null) {
       userData['userPhotoUrl'] = userPhotoUrl;
     }
+    userData['token'] = token;
     return userData;
   }
+
+  bool get isLost => lost;
 
   void promote() {
     role = UserRole.moderator.toShortString();

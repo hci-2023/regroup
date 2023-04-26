@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:regroup/models/user.dart';
@@ -144,7 +146,7 @@ class _JoinGroupState extends State<JoinGroup> {
                           setState(() => _showLinearProgressIndicator =
                               !_showLinearProgressIndicator);
 
-                          String? groupId = await isValidGroup(
+                          Map<String, dynamic> groupInfo = await isValidGroup(
                               int.parse(textFormFieldController.text));
 
                           await FirebaseMessaging.instance
@@ -152,18 +154,31 @@ class _JoinGroupState extends State<JoinGroup> {
                           String? token =
                               await FirebaseMessaging.instance.getToken();
 
-                          print("groupId -> $groupId");
-
-                          if (groupId != null) {
+                          if (groupInfo.isNotEmpty) {
+                            String groupId = groupInfo['groupId'];
                             if (context.mounted) {
+                              String? deviceId = context.read<User>().deviceId;
+                              String? username = context.read<User>().username;
+                              File? userPhoto = context.read<User>().userPhoto;
+                              String? userPhotoLink;
+
+                              if (groupInfo['showPhotos'] &&
+                                  userPhoto != null) {
+                                userPhotoLink =
+                                    await uploadPhoto(deviceId, userPhoto);
+                                if (context.mounted) {
+                                  context.read<User>().setUserPhoto(null);
+                                }
+                              }
+
                               UserRepository userRepository =
                                   UserRepository(groupId);
                               await userRepository.addUser(GroupUser(
-                                  deviceId: context.read<User>().deviceId,
-                                  username: context.read<User>().username,
+                                  deviceId: deviceId,
+                                  username: username,
                                   role: UserRole.participant.toShortString(),
-                                  userPhotoUrl:
-                                      context.read<User>().userPhotoLink,
+                                  lost: false,
+                                  userPhotoUrl: userPhotoLink,
                                   token: token));
 
                               if (context.mounted) {
