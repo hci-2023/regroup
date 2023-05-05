@@ -51,33 +51,49 @@ exports.recursiveDelete = functions
     };
   });
 
-
 exports.checkNeighbours = functions.https.onCall(async (req, res) => {
-
+  //usato per test
+  //exports.checkNeighbours = functions.firestore.document('groups/{docId}/data/{docId1}').onWrite(async (change,context) => {
+  console.log("Inizio checkNeighbours");
+  //rimuovere commento dopo test
   const docId = req.docId;
-  console.log("docid =", docId);
-  let datiDict = {};
-  let utentiList = [];
+  var utenti = req.users;
 
-  //let dati = await admin.firestore().collection("dati").get();
-  //let utenti = await admin.firestore().collection("utenti").get();
+  //console.log("docid =",docId);
+  //usato per test
+  //const docId = "6ef2";
+  var datiDict = {};
+  var utentiList = [];
 
-  let dati = await admin.firestore().collection("groups").doc(docId).collection("data").get();
-  let utenti = await admin.firestore().collection("groups").doc(docId).collection("users").get();
+  //var dati = await admin.firestore().collection("dati").get();
+  //var utenti = await admin.firestore().collection("utenti").get();
 
+  var dati = await admin.firestore().collection("groups").doc(docId).collection("data").get();
+  //var utenti = await admin.firestore().collection("groups").doc(docId).collection("users").get();
 
-  //console.log(prova.docChanges().map(obj => { return { data: obj.doc.data(), change: obj.type}}));
-  //prova.docs.map(obj => {console.log(obj.data())});
-  dati.docs.map(obj => { datiDict[obj.data().nome] = obj.data().vicini });
-  utenti.docs.map(obj => { utentiList.push(obj.data().deviceId) });
+  dati.docs.map(obj => { 
+    datiDict[obj.data().nome] = obj.data().vicini;
+   });
+
+  var docs = await admin.firestore().collection("groups").doc(docId).collection("data").listDocuments();
+  docs.forEach(async (docs) => { await docs.delete() });
 
   utentiDict = {}
-  utenti.docs.map(obj => { utentiDict[obj.data().deviceId] = obj.data().username });
-
   roleDict = {}
-  utenti.docs.map(obj => { roleDict[obj.data().deviceId] = obj.data().role });
+
+  for (let user in utenti) {
+    utentiList.push(utenti[user].deviceId);
+    utentiDict[utenti[user].deviceId] = utenti[user].username;
+    roleDict[utenti[user].deviceId] = utenti[user].role;
+  };
+
+  //utenti.docs.map(obj => { utentiList.push(obj.data().deviceId) });
 
 
+  //utenti.docs.map(obj => { utentiDict[obj.data().deviceId] = obj.data().username });
+
+  //roleDict = {}
+  //utenti.docs.map(obj => { roleDict[obj.data().deviceId] = obj.data().role });
 
   //console.log(dict);
   //console.log(utenti);
@@ -97,19 +113,20 @@ exports.checkNeighbours = functions.https.onCall(async (req, res) => {
   viciniList = Array.from(vicini);
 
   //utenti non rilevati
-  let diff = utentiList.filter(function (x) {
+  var diff = utentiList.filter(function (x) {
     return viciniList.indexOf(x) < 0;
   });
 
-  console.log("viciniList", viciniList);
-  console.log("utentiList", utentiList);
-  console.log("diff", diff);
-  console.log("utentidict", utentiDict);
+  console.log("roleDict", roleDict);
+  console.log("viciniList ", viciniList);
+  console.log("utentiList ", utentiList);
+  console.log("diff ", diff);
+  console.log("utentidict ", utentiDict);
   //console.log(vicini);
   diffNomi = [];
   for (i in diff) {
-    console.log(diff[i]);
-    console.log(i);
+    //console.log("diff[i] "+diff[i]);
+    //console.log("i "+i);
     if (roleDict[diff[i]] == "participant") {
       diffNomi.push(utentiDict[diff[i]]);
 
@@ -118,34 +135,43 @@ exports.checkNeighbours = functions.https.onCall(async (req, res) => {
   console.log("diffnomi", diffNomi);
 
   //prende i token a cui inviare la notifica, tutti gli utenti di un gruppo
-  let allTokens = await admin.firestore().collection('groups').doc(docId).collection("users").get();
-  let tokens = [];
+  var allTokens = await admin.firestore().collection('groups').doc(docId).collection("users").get();
+  var tokens = [];
+
+  //rimuovere commento dopo test
   allTokens.docs.map(obj => { tokens.push(obj.data().token) });
 
-  //console.log(tokens);
-
-  /*const message = {
-    notification: {
-      title: "Lost participant",
-      body: "A participant in your group walked away",
-    },
-    tokens: tokens,
-  };*/
-
-  const message = {
-    notification: {
-      title: "Lost participant",
-      //usare diff non vicinilist
-      body: diffNomi.toString() + " walked away",
-    },
-    tokens: tokens,
-  };
-  //if(tokens.length > 0){//debgug usare quella sotto
+  //console.log("tokens"+tokens);
+  //console.log("token len"+tokens.length);
   if (tokens.length > 0 && diffNomi.length > 0) {
+    const message = {
+      notification: {
+        title: "Lost participant",
+        //usare diff non vicinilist
+        body: diffNomi.join(', ') + " walked away",
+      },
+      tokens: tokens,
+    };
     admin.messaging().sendMulticast(message);
   }
+  //resetta lost
+  for (let x in utentiList) {
+    if (!diff.includes(utentiList[x])) {
+      await admin.firestore().collection("groups").doc(docId).collection("users").doc(utentiList[x]).update({ lost: false });
+    }
+  }
 
-  //console.log("fine funzione");
+  //setta lost
+  for (let x in diff) {
+    console.log("x in diff = " + diff[x]);
+    console.log("role x in diff = " + roleDict[diff[x]]);
+    if (diff.length > 0 && roleDict[diff[x]] == "participant") {
+      await admin.firestore().collection("groups").doc(docId).collection("users").doc(diff[x]).update({ lost: true });
+    }
+  }
+
+  console.log("Fine checkNeighbours");
 
 
 });
+

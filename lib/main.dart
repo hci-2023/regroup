@@ -13,7 +13,6 @@ import 'package:regroup/views/intro.dart';
 import 'package:regroup/views/profile.dart';
 import 'package:regroup/views/create_group.dart';
 import 'package:regroup/views/join_group.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/services.dart';
@@ -128,13 +127,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GroupIt',
+      title: 'ReGroup',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => const HomePage(title: "GroupIt"),
+        "/": (context) => const HomePage(title: "ReGroup"),
         "/intro": (context) => const Intro(),
         "/userProfile": (context) => const Profile(),
         "/createGroup": (context) => const CreateGroup(),

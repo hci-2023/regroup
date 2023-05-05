@@ -1,9 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:regroup/models/user.dart';
 import 'package:regroup/repository/group_repository.dart';
 import 'package:regroup/repository/user_repository.dart';
@@ -39,39 +35,16 @@ class _ShowGroupState extends State<ShowGroup> {
   late final Stream<QuerySnapshot<Object?>> usersDataStream;
   late Map<String, dynamic> userInfo;
 
-  final List<BluetoothDiscoveryResult> results =
+  final List<BluetoothDiscoveryResult> rawResults =
       List<BluetoothDiscoveryResult>.empty(growable: true);
   StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
-  bool isDiscovering = false;
-  final FlutterScanBluetooth _bluetooth = FlutterScanBluetooth();
+
   //nome del bluetooth
-  String _nome = "";
-  String _oldNome = "";
-  // risultati vicini scansione [Nome, Indirizzo, rssi]
-  List _risultati = [];
+  String actualName = "";
+  List results = [];
+  bool? status;
 
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
-
-  Future<void> initializeService() async {
-    final service = FlutterBackgroundService();
-    await service.configure(
-        androidConfiguration: AndroidConfiguration(
-          onStart: onStart,
-          autoStart: true,
-          isForegroundMode: true,
-        ),
-        iosConfiguration: IosConfiguration(
-            //boh roba per ricchi
-            ));
-  }
-
-  Future<void> onStart(ServiceInstance service) async {
-    print("ONSTART");
-    DartPluginRegistrant.ensureInitialized();
-    Timer.periodic(const Duration(seconds: 30), (timer) {
-      restartDiscovery();
-    });
-  }
 
   @override
   void initState() {
@@ -80,8 +53,16 @@ class _ShowGroupState extends State<ShowGroup> {
     userRepository = UserRepository(widget.groupId);
     userDataRepository = UserDataRepository(widget.groupId);
 
-    var timerDiscovery = Timer.periodic(const Duration(seconds: 30), (timer) {
-      restartDiscovery();
+    var timerDiscovery =
+        Timer.periodic(const Duration(seconds: 5), (timer) async {
+      var response = await FlutterBluetoothSerial.instance.isDiscovering;
+      setState(() {
+        status = response;
+      });
+      if (response != null && !response) {
+        print("INIT");
+        restartDiscovery();
+      }
     });
 
     userStream = userRepository.getUserStream(widget.userId).listen((snapshot) {
@@ -114,6 +95,7 @@ class _ShowGroupState extends State<ShowGroup> {
   @override
   void dispose() {
     userStream.cancel();
+    _streamSubscription?.cancel();
     super.dispose();
   }
 
@@ -128,79 +110,85 @@ class _ShowGroupState extends State<ShowGroup> {
       await FlutterBluetoothSerial.instance.requestEnable();
     }
 
-    FlutterBluetoothSerial.instance.name.then((name) {
-      _oldNome = name!;
-    });
-    // cambia
-    FlutterBluetoothSerial.instance.changeName(widget.userId);
-    print("USERID${widget.userId}");
-    print("USERID${widget.userId.runtimeType}");
-    FlutterBluetoothSerial.instance.name.then((name) {
-      print(name);
-    });
+    await FlutterBluetoothSerial.instance.changeName(widget.userId);
   }
 
   // inizia scansione e stampa risultati
   void restartDiscovery() async {
     name();
-    results.clear();
-    isDiscovering = true;
+
+    rawResults.clear();
+
+    var users = await userRepository.getUsers();
+
     //inizia scansione
-    startDiscovery();
+    startDiscovery().then((value) {
+      List finale = [actualName, results];
+      //print(finale);
+      if (results.isNotEmpty) {
+        invia();
+      }
+      //fa partire la funzione che controlla che tutte le persone siano presenti
+      if (isOwner) {
+        //print(groupRepository.docId);
+        try {
+          groupRepository.checkNeighbours(users);
+        } catch (_) {}
+
+        //print("vicini controllati");
+      }
+      results = [];
+    });
     //aspetta la fine della scansione
-    await Future.delayed(const Duration(seconds: 15));
-    List finale = [_nome, _risultati];
-    //print(finale);
-    if (_risultati.isNotEmpty) {
-      invia();
-    }
-    //fa partire la funzione che controlla che tutte le persone siano presenti
-    if (isOwner) {
-      //print(groupRepository.docId);
-      groupRepository.checkNeighbours();
-      //print("vicini controllati");
-    }
-    _risultati = [];
+    //await Future.delayed(const Duration(seconds: 15));
   }
 
-  void startDiscovery() async {
-    //richiede permessi
-    await _bluetooth.requestPermissions();
+  Future<void> startDiscovery() async {
+    try {
+      await FlutterBluetoothSerial.instance.requestEnable();
+    } catch (_) {
+      return;
+    }
 
     //attiva bluetooth se disattivato
     if (!_bluetoothState.isEnabled) {
       await FlutterBluetoothSerial.instance.requestEnable();
     }
+
+    //await FlutterBluetoothSerial.instance.cancelDiscovery();
+
     //nome Dispositivo bluetooth
     FlutterBluetoothSerial.instance.name.then((name) {
-      _nome = name!;
+      print("____ ${name!}");
+      actualName = name!;
     });
     //inizia scansione
     _streamSubscription =
         FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
-      final existingIndex = results
+      final existingIndex = rawResults
           .indexWhere((element) => element.device.address == r.device.address);
       if (existingIndex >= 0) {
-        results[existingIndex] = r;
+        rawResults[existingIndex] = r;
       } else {
-        results.add(r);
+        rawResults.add(r);
       }
-      //aggiunge i dispositivi vicini a _risultati
+
+      //aggiunge i dispositivi vicini a results
       //TODO aggiungere solo i dispositivi nel gruppo
       if (r.device.name != null) {
-        _risultati.add(r.device.name);
+        results.add(r.device.name);
       }
     });
+
     //scansione terminata
     _streamSubscription!.onDone(() async {
-      await FlutterBluetoothSerial.instance.cancelDiscovery();
-      isDiscovering = false;
+      //await FlutterBluetoothSerial.instance.cancelDiscovery();
       print("scansione terminata");
     });
   }
 
   void invia() {
-    final dato = <String, dynamic>{"nome": _nome, "vicini": _risultati};
+    final dato = <String, dynamic>{"nome": actualName, "vicini": results};
     userDataRepository.addUserData(widget.userId, dato);
     print("Inviato");
   }
@@ -278,9 +266,11 @@ class _ShowGroupState extends State<ShowGroup> {
                                     padding: const EdgeInsets.all(10),
                                     child: Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.info_outlined,
-                                          color: Colors.blue,
+                                          color: status == false
+                                              ? Colors.redAccent
+                                              : Colors.blue,
                                         ),
                                         const SizedBox(width: 10),
                                         Text(
@@ -422,6 +412,10 @@ class _ShowGroupState extends State<ShowGroup> {
                                                             }
                                                           } else {
                                                             await userRepository
+                                                                .deleteUser(
+                                                                    widget
+                                                                        .userId);
+                                                            await userDataRepository
                                                                 .deleteUser(
                                                                     widget
                                                                         .userId);

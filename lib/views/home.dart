@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:provider/provider.dart';
 
 import 'package:regroup/services/secure_local_storage.dart';
@@ -10,7 +11,6 @@ import 'package:regroup/models/secure_local_storage.dart';
 import 'package:regroup/providers/user_provider.dart';
 import 'package:regroup/services/device_information.dart';
 
-import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import 'package:regroup/services/firebase_utils.dart';
@@ -31,7 +31,6 @@ class _HomePageState extends State<HomePage> {
   bool _showLinearProgressIndicator = false;
 
   final FlutterScanBluetooth _bluetooth = FlutterScanBluetooth();
-  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
 
   @override
   void initState() {
@@ -50,7 +49,8 @@ class _HomePageState extends State<HomePage> {
       deviceIdResponse = await getDeviceId();
 
       if (deviceIdResponse != null) {
-        await _storageService.writeSecureData(StorageItem('deviceId', deviceIdResponse));
+        await _storageService
+            .writeSecureData(StorageItem('deviceId', deviceIdResponse));
       }
     } else {
       if (context.mounted) {
@@ -73,7 +73,8 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -85,19 +86,23 @@ class _HomePageState extends State<HomePage> {
 
     await _bluetooth.requestPermissions();
 
-    _bluetoothState = await FlutterBluetoothSerial.instance.state;
-
-    if (!_bluetoothState.isEnabled) {
+    try {
       await FlutterBluetoothSerial.instance.requestEnable();
-    }
+    } catch (_) {}
 
     String? groupId;
     groupId = await memberStatus(deviceIdResponse);
 
     if (groupId != null) {
       if (context.mounted) {
-        showSnack(context, "You are already in a group, leave the current group to join or create a new one", durationInMilliseconds: 2000);
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ShowGroup(groupId: groupId!, userId: context.read<User>().deviceId)),
+        showSnack(context,
+            "You are already in a group, leave the current group to join or create a new one",
+            durationInMilliseconds: 2000);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShowGroup(
+                    groupId: groupId!, userId: context.read<User>().deviceId)),
             (Route<dynamic> route) => false);
       }
     }
@@ -149,17 +154,20 @@ class _HomePageState extends State<HomePage> {
                         alignment: AlignmentDirectional(-0.8, 0),
                         child: AutoSizeText(
                           'Welcome,',
-                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.w600),
                           maxLines: 2,
                         ),
                       ),
                       const Align(
                         alignment: AlignmentDirectional(0, 0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(30, 20, 30, 20),
+                          padding:
+                              EdgeInsetsDirectional.fromSTEB(30, 20, 30, 20),
                           child: AutoSizeText(
                             'Create a group to keep track of all participants, or join an existing group',
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.w500),
                           ),
                         ),
                       ),

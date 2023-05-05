@@ -31,4 +31,10 @@ class UserRepository {
   Future<void> deleteUser(String userId) async {
     await collection.doc(userId).delete();
   }
+
+  Future<List<Object?>> getUsers() async {
+    var users = await collection.get();
+    var data = users.docs.map((user) => user.data()).toList();
+    return data;
+  }
 }
