@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<String?> isValidGroup(int accessIdentifier) async {
-  String? groupId;
+Future<Map<String, dynamic>> isValidGroup(int accessIdentifier) async {
+  Map<String, dynamic> response = {};
 
   final db = FirebaseFirestore.instance;
 
@@ -13,10 +13,10 @@ Future<String?> isValidGroup(int accessIdentifier) async {
 
   if (docRef.size != 0) {
     var doc = docRef.docs[0];
-    groupId = doc.reference.id;
+    response = doc.data();
   }
 
-  return groupId;
+  return response;
 }
 
 Future<String?> memberStatus(String? deviceId) async {

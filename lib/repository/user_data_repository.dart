@@ -24,7 +24,7 @@ class UserDataRepository {
     return collection.doc(userId).set(userData);
   }
 
-  void deleteUser(String userId) async {
+  Future<void> deleteUser(String userId) async {
     await collection.doc(userId).delete();
   }
 }

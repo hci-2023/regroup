@@ -9,9 +9,11 @@ class UserCard extends StatelessWidget {
   final GroupUser user;
   final String groupId;
   final String currentUserRole;
+  final bool showPhoto;
   final TextStyle boldStyle;
+
   late final UserRepository userRepository;
-  late final int userOrder;
+  late int userOrder;
   final splashColor = {
     'owner': Colors.blue[100],
     'moderator': Colors.grey[100],
@@ -24,10 +26,15 @@ class UserCard extends StatelessWidget {
       required this.user,
       required this.groupId,
       required this.currentUserRole,
+      required this.showPhoto,
       required this.boldStyle})
       : super(key: key) {
     userRepository = UserRepository(groupId);
     userOrder = userRoleValue[user.role]!;
+
+    if (user.isLost) {
+      userOrder = -1;
+    }
   }
 
   SampleItem? selectedMenu;
@@ -36,7 +43,15 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
-      leading: _getUserIcon(context),
+      leading: Row(mainAxisSize: MainAxisSize.min, children: [
+        _getUserIcon(context),
+        const SizedBox(width: 14),
+        Icon(
+          user.isLost ? Icons.bluetooth_disabled : Icons.bluetooth_connected,
+          color: user.isLost ? Colors.red : Colors.blue,
+          size: 24.0,
+        )
+      ]),
       title: Text(user.username),
       subtitle: Text(user.role.capitalize()),
       trailing: currentUserRole == UserRole.owner.toShortString() &&
@@ -55,6 +70,7 @@ class UserCard extends StatelessWidget {
               },
               itemBuilder: (BuildContext context) => _getMenuEntry(user))
           : null,
+      //shape: user.isLost ? Border(top: BorderSide(color: Colors.redAccent, width: 3), bottom: BorderSide(color: Colors.redAccent, width: 3)) : null
     ));
   }
 
@@ -90,7 +106,7 @@ class UserCard extends StatelessWidget {
 
   Widget _getUserIcon(BuildContext context) {
     Widget userIcon;
-    if (user.userPhotoUrl != null) {
+    if (showPhoto && user.userPhotoUrl != null) {
       userIcon = GestureDetector(
         onTap: () {
           showDialog(
@@ -109,7 +125,7 @@ class UserCard extends StatelessWidget {
         },
         child: CircleAvatar(
           backgroundImage: NetworkImage(user.userPhotoUrl!),
-          radius: 30.0,
+          radius: 24.0,
         ),
       ); //CircleAvatar
     } else if (user.role == 'owner') {

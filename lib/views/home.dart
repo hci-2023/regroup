@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:provider/provider.dart';
 
 import 'package:regroup/services/secure_local_storage.dart';
@@ -9,7 +11,6 @@ import 'package:regroup/models/secure_local_storage.dart';
 import 'package:regroup/providers/user_provider.dart';
 import 'package:regroup/services/device_information.dart';
 
-import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import 'package:regroup/services/firebase_utils.dart';
@@ -30,7 +31,6 @@ class _HomePageState extends State<HomePage> {
   bool _showLinearProgressIndicator = false;
 
   final FlutterScanBluetooth _bluetooth = FlutterScanBluetooth();
-  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
 
   @override
   void initState() {
@@ -64,32 +64,31 @@ class _HomePageState extends State<HomePage> {
     FlutterNativeSplash.remove();
 
     if (usernameResponse == null) {
-      if (context.mounted)
+      if (context.mounted) {
         await Navigator.pushReplacementNamed(context, "/intro");
+      }
     } else {
       if (context.mounted) {
         context.read<User>().setUsername(usernameResponse);
       }
     }
 
-    String? userPhotoLink =
-        await _storageService.readSecureData('userPhotoLink');
-
-    if (userPhotoLink != null) {
-      if (context.mounted) {
-        context.read<User>().setUserPhotoLink(userPhotoLink);
-      }
-    }
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
     await _bluetooth.requestPermissions();
 
-    _bluetoothState = await FlutterBluetoothSerial.instance.state;
-
-    if (!_bluetoothState.isEnabled) {
+    try {
       await FlutterBluetoothSerial.instance.requestEnable();
-    }
-
-    // aggiungi funzione che controlla che il bluetooth sia attivo
+    } catch (_) {}
 
     String? groupId;
     groupId = await memberStatus(deviceIdResponse);
