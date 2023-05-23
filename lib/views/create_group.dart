@@ -78,10 +78,13 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
             title: Text(title),
             leading: BackButton(
-              color: Colors.white,
+              color: Colors.blue,
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -283,6 +286,8 @@ class _CreateGroupState extends State<CreateGroup> {
                   child: const Text('Create Group',
                       style: TextStyle(
                         fontSize: 20,
+                        fontFamily: 'Outfit',
+                        fontWeight: FontWeight.w400,
                         color: Colors.white,
                       )),
                 ),

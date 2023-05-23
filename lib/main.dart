@@ -129,7 +129,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ReGroup',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+            .copyWith(background: Colors.white),
       ),
       initialRoute: "/",
       routes: {

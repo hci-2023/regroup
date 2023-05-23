@@ -60,10 +60,13 @@ class _JoinGroupState extends State<JoinGroup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(title),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          //title: Text(title),
           leading: BackButton(
-            color: Colors.white,
+            color: Colors.blue,
             onPressed: () {
               Navigator.pop(context);
             },
@@ -86,7 +89,7 @@ class _JoinGroupState extends State<JoinGroup> {
                   'Group id',
                   style: TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 trailing: IconButton(
@@ -205,9 +208,10 @@ class _JoinGroupState extends State<JoinGroup> {
                       : null,
                   child: const Text('Join Group',
                       style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                      )),
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontFamily: 'Outfit',
+                          fontWeight: FontWeight.w400)),
                 ),
               ),
             ],

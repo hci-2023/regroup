@@ -201,10 +201,13 @@ class _ShowGroupState extends State<ShowGroup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-          title: Text(title),
+          //title: Text(title),
+          elevation: 0,
+          backgroundColor: Colors.white,
           leading: BackButton(
-            color: Colors.white,
+            color: Colors.blue,
             onPressed: () {
               showDialog(
                   context: context,
@@ -439,9 +442,9 @@ class _ShowGroupState extends State<ShowGroup> {
                                           ? "Delete group"
                                           : "Leave the group",
                                       style: const TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      ))),
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400))),
                             ),
                             Expanded(
                                 child: _buildList(

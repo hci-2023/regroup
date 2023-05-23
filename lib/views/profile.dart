@@ -56,8 +56,10 @@ class _ProfileWidgetState extends State<Profile> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
           leading: BackButton(
-            color: Colors.white,
+            color: Colors.blue,
             onPressed: () {
               Navigator.pop(context);
             },

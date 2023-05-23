@@ -10,10 +10,16 @@ class ShareGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-            title: const Text(title),
+            elevation: 0,
+            backgroundColor: Colors.white,
+            title: const Text(
+              title,
+              style: TextStyle(color: Colors.blue),
+            ),
             leading: BackButton(
-              color: Colors.white,
+              color: Colors.blue,
               onPressed: () {
                 Navigator.pop(context);
               },

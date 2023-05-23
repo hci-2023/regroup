@@ -17,7 +17,7 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F4F8),
+      backgroundColor: Colors.white,
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -25,9 +25,6 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
           Container(
             width: double.infinity,
             height: 100,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF1F4F8),
-            ),
             child: const Align(
               alignment: AlignmentDirectional(0, 0),
               child: Text(
@@ -46,9 +43,6 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
             child: Container(
               width: double.infinity,
               height: 100,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF1F4F8),
-              ),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,9 +74,6 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
             child: Container(
               width: double.infinity,
               height: 100,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF1F4F8),
-              ),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,9 +104,6 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
             child: Container(
               width: double.infinity,
               height: 100,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF1F4F8),
-              ),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,9 +133,6 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
             child: Container(
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF1F4F8),
-              ),
               child: Align(
                 alignment: const AlignmentDirectional(0, 0),
                 child: Column(
@@ -207,7 +192,7 @@ class _AllowPermissionsWidgetState extends State<AllowPermissions> {
                           child: Container(
                             width: 300,
                             decoration: BoxDecoration(
-                              color: const Color(0xA82196F3),
+                              color: Colors.blue,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Align(
