@@ -29,7 +29,8 @@ class _ProfileWidgetState extends State<Profile> {
   var submit = true;
   var lastUsername = "";
   var check = true;
-  Widget checkIcon = const Icon(Icons.check_rounded, color: Colors.blueAccent, size: 30);
+  Widget checkIcon =
+      const Icon(Icons.check_rounded, color: Colors.blueAccent, size: 30);
 
   @override
   void initState() {
@@ -111,14 +112,19 @@ class _ProfileWidgetState extends State<Profile> {
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.cover,
-                                        loadingBuilder: (context, child, loadingProgress) {
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
                                           if (loadingProgress == null) {
                                             return child;
                                           }
-                                          return const Center(child: CircularProgressIndicator());
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
                                         },
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return const Icon(Icons.error_outline);
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return const Icon(
+                                              Icons.error_outline);
                                         },
                                       ),
                               ),
@@ -141,7 +147,11 @@ class _ProfileWidgetState extends State<Profile> {
                             });
 
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(source: ImageSource.camera, maxHeight: 900, maxWidth: 600, imageQuality: 50);
+                            final XFile? image = await picker.pickImage(
+                                source: ImageSource.camera,
+                                maxHeight: 900,
+                                maxWidth: 600,
+                                imageQuality: 50);
                             File imageFile;
 
                             if (image != null) {
@@ -150,7 +160,8 @@ class _ProfileWidgetState extends State<Profile> {
                               if (context.mounted) {
                                 context.read<User>().setUserPhoto(imageFile);
                                 userPhoto = imageFile;
-                                showSnack(context, "The photo is disposable, it will only be used for the time it is in the group and subsequently deleted",
+                                showSnack(context,
+                                    "The photo is disposable, it will only be used for the time it is in the group and subsequently deleted",
                                     durationInMilliseconds: 3500);
                               }
                             }
@@ -179,15 +190,19 @@ class _ProfileWidgetState extends State<Profile> {
                             onChanged: () => setState(() {
                               submit = _formKey.currentState!.validate();
                               if (!submit) {
-                                checkIcon = const Icon(Icons.check_rounded, color: Colors.red, size: 30);
+                                checkIcon = const Icon(Icons.check_rounded,
+                                    color: Colors.red, size: 30);
                               } else {
-                                checkIcon = const Icon(Icons.check_rounded, color: Colors.blueAccent, size: 30);
+                                checkIcon = const Icon(Icons.check_rounded,
+                                    color: Colors.blueAccent, size: 30);
                               }
                             }),
                             child: TextFormField(
                               maxLength: 20,
                               validator: (value) {
-                                if (value == null || value.isEmpty || value.length < 3) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.length < 3) {
                                   return 'Must be at least 3 characters';
                                 }
                                 return null;
@@ -200,26 +215,50 @@ class _ProfileWidgetState extends State<Profile> {
                               decoration: const InputDecoration(
                                 labelText: 'Username',
                                 hintText: 'Username',
-                                hintStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, fontFamily: "Poppins", color: Color(0xFF57636C)),
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                hintStyle: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: "Poppins",
+                                    color: Color(0xFF57636C)),
+                                contentPadding:
+                                    EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
                               ),
-                              style: const TextStyle(fontFamily: "Poppins", fontWeight: FontWeight.w400, color: Colors.black, fontSize: 14),
+                              style: const TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                  fontSize: 14),
                             ),
                           ),
                         ),
                         Align(
                           alignment: const AlignmentDirectional(1.2, 0),
                           child: TextButton(
-                            style: const ButtonStyle(splashFactory: NoSplash.splashFactory, backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                            style: const ButtonStyle(
+                                splashFactory: NoSplash.splashFactory,
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.white)),
                             onPressed: () async {
                               submit
                                   ? {
-                                      (_isReadonly) ? FocusScope.of(context).unfocus() : FocusScope.of(context).requestFocus(focusNode),
-                                      if (_formKey.currentState!.validate() & (_controller.text != lastUsername))
+                                      (_isReadonly)
+                                          ? FocusScope.of(context).unfocus()
+                                          : FocusScope.of(context)
+                                              .requestFocus(focusNode),
+                                      if (_formKey.currentState!.validate() &
+                                          (_controller.text != lastUsername))
                                         {
-                                          lastUsername = _controller.text.trim(),
-                                          await _storageService.writeSecureData(StorageItem('username', lastUsername)),
-                                          if (context.mounted) {context.read<User>().setUsername(lastUsername)}
+                                          lastUsername =
+                                              _controller.text.trim(),
+                                          await _storageService.writeSecureData(
+                                              StorageItem(
+                                                  'username', lastUsername)),
+                                          if (context.mounted)
+                                            {
+                                              context
+                                                  .read<User>()
+                                                  .setUsername(lastUsername)
+                                            }
                                         },
                                       setState(() {
                                         _isReadonly = !_isReadonly;

@@ -16,7 +16,8 @@ import 'dart:async';
 class ShowGroup extends StatefulWidget {
   final String groupId;
   final String userId;
-  const ShowGroup({Key? key, required this.groupId, required this.userId}) : super(key: key);
+  const ShowGroup({Key? key, required this.groupId, required this.userId})
+      : super(key: key);
 
   @override
   State<ShowGroup> createState() => _ShowGroupState();
@@ -34,7 +35,8 @@ class _ShowGroupState extends State<ShowGroup> {
   late final Stream<QuerySnapshot<Object?>> usersDataStream;
   late Map<String, dynamic> userInfo;
 
-  final List<BluetoothDiscoveryResult> rawResults = List<BluetoothDiscoveryResult>.empty(growable: true);
+  final List<BluetoothDiscoveryResult> rawResults =
+      List<BluetoothDiscoveryResult>.empty(growable: true);
   StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
 
   //nome del bluetooth
@@ -51,7 +53,8 @@ class _ShowGroupState extends State<ShowGroup> {
     userRepository = UserRepository(widget.groupId);
     userDataRepository = UserDataRepository(widget.groupId);
 
-    var timerDiscovery = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    var timerDiscovery =
+        Timer.periodic(const Duration(seconds: 5), (timer) async {
       var response = await FlutterBluetoothSerial.instance.isDiscovering;
       setState(() {
         status = response;
@@ -160,8 +163,10 @@ class _ShowGroupState extends State<ShowGroup> {
       actualName = name!;
     });
     //inizia scansione
-    _streamSubscription = FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
-      final existingIndex = rawResults.indexWhere((element) => element.device.address == r.device.address);
+    _streamSubscription =
+        FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
+      final existingIndex = rawResults
+          .indexWhere((element) => element.device.address == r.device.address);
       if (existingIndex >= 0) {
         rawResults[existingIndex] = r;
       } else {
@@ -190,7 +195,8 @@ class _ShowGroupState extends State<ShowGroup> {
 
   bool _showLinearProgressIndicator = true;
 
-  final boldStyle = const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
+  final boldStyle =
+      const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
@@ -208,8 +214,10 @@ class _ShowGroupState extends State<ShowGroup> {
                   builder: (context) => AlertDialog(
                         title: const Text('Leave the group'),
                         content: SingleChildScrollView(
-                            child: ListBody(
-                                children: const <Widget>[Text('In order to return to the previous screen, you must first leave or delete the group.')])),
+                            child: ListBody(children: const <Widget>[
+                          Text(
+                              'In order to return to the previous screen, you must first leave or delete the group.')
+                        ])),
                         actions: <Widget>[
                           TextButton(
                             child: const Text('Close'),
@@ -243,7 +251,8 @@ class _ShowGroupState extends State<ShowGroup> {
                           snapshotUsers.data != null &&
                           snapshotUsers.data != null &&
                           snapshotGroup.data!.data() != null) {
-                        Map<String, dynamic> groupInfo = snapshotGroup.data!.data() as Map<String, dynamic>;
+                        Map<String, dynamic> groupInfo =
+                            snapshotGroup.data!.data() as Map<String, dynamic>;
                         return Column(
                           children: [
                             const SizedBox(height: 20),
@@ -252,7 +261,8 @@ class _ShowGroupState extends State<ShowGroup> {
                               children: [
                                 Card(
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
                                   ),
                                   child: SizedBox(
                                       child: Padding(
@@ -261,18 +271,26 @@ class _ShowGroupState extends State<ShowGroup> {
                                       children: [
                                         Icon(
                                           Icons.info_outlined,
-                                          color: status == false ? Colors.redAccent : Colors.blue,
+                                          color: status == false
+                                              ? Colors.redAccent
+                                              : Colors.blue,
                                         ),
                                         const SizedBox(width: 10),
-                                        Text('ID: ${groupInfo["accessIdentifier"]}')
+                                        Text(
+                                            'ID: ${groupInfo["accessIdentifier"]}')
                                       ],
                                     ),
                                   )),
                                 ),
                                 IconButton(
                                     onPressed: () async {
-                                      await Clipboard.setData(ClipboardData(text: groupInfo["accessIdentifier"].toString())).then((_) {
-                                        showSnack(context, "Group id copied to clipboard");
+                                      await Clipboard.setData(ClipboardData(
+                                              text:
+                                                  groupInfo["accessIdentifier"]
+                                                      .toString()))
+                                          .then((_) {
+                                        showSnack(context,
+                                            "Group id copied to clipboard");
                                       });
                                       // copied successfully
                                     },
@@ -284,7 +302,11 @@ class _ShowGroupState extends State<ShowGroup> {
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => ShareGroup(qrCodeData: groupInfo["accessIdentifier"].toString())),
+                                        MaterialPageRoute(
+                                            builder: (context) => ShareGroup(
+                                                qrCodeData: groupInfo[
+                                                        "accessIdentifier"]
+                                                    .toString())),
                                       );
                                     },
                                     icon: const Icon(
@@ -351,41 +373,63 @@ class _ShowGroupState extends State<ShowGroup> {
                                               context: context,
                                               builder: (context) {
                                                 return AlertDialog(
-                                                  title: Text(isOwner ? 'Delete group' : "Leave group"),
+                                                  title: Text(isOwner
+                                                      ? 'Delete group'
+                                                      : "Leave group"),
                                                   content: Text(isOwner
                                                       ? 'Are you really sure you want to eliminate the group?'
                                                       : "Are you really sure you want to leave the group?"),
                                                   actions: [
                                                     TextButton(
-                                                      child: const Text("Cancel"),
-                                                      onPressed: () => Navigator.pop(context),
+                                                      child:
+                                                          const Text("Cancel"),
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
                                                     ),
                                                     TextButton(
                                                         child: const Text("Ok"),
                                                         onPressed: () async {
                                                           setState(() {
-                                                            _showLinearProgressIndicator = true;
+                                                            _showLinearProgressIndicator =
+                                                                true;
                                                           });
 
                                                           if (isOwner) {
-                                                            bool response = await groupRepository.deleteGroup();
+                                                            bool response =
+                                                                await groupRepository
+                                                                    .deleteGroup();
 
-                                                            if (response == false) {
-                                                              if (context.mounted) {
-                                                                Navigator.pop(context);
-                                                                showSnack(context, "The group could not be removed, please try again in a few moments",
-                                                                    durationInMilliseconds: 1500);
+                                                            if (response ==
+                                                                false) {
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                showSnack(
+                                                                    context,
+                                                                    "The group could not be removed, please try again in a few moments",
+                                                                    durationInMilliseconds:
+                                                                        1500);
                                                               }
                                                             }
                                                           } else {
-                                                            await userRepository.deleteUser(widget.userId);
-                                                            await userDataRepository.deleteUser(widget.userId);
-                                                            await deletePhoto(widget.userId);
+                                                            await userRepository
+                                                                .deleteUser(
+                                                                    widget
+                                                                        .userId);
+                                                            await userDataRepository
+                                                                .deleteUser(
+                                                                    widget
+                                                                        .userId);
+                                                            await deletePhoto(
+                                                                widget.userId);
                                                           }
 
                                                           if (context.mounted) {
                                                             setState(() {
-                                                              _showLinearProgressIndicator = false;
+                                                              _showLinearProgressIndicator =
+                                                                  false;
                                                             });
                                                           }
                                                         })
@@ -393,10 +437,20 @@ class _ShowGroupState extends State<ShowGroup> {
                                                 );
                                               });
                                         },
-                                  child: Text(isOwner ? "Delete group" : "Leave the group",
-                                      style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w400))),
+                                  child: Text(
+                                      isOwner
+                                          ? "Delete group"
+                                          : "Leave the group",
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400))),
                             ),
-                            Expanded(child: _buildList(context, snapshotUsers.data?.docs ?? [], groupInfo['showPhotos'])),
+                            Expanded(
+                                child: _buildList(
+                                    context,
+                                    snapshotUsers.data?.docs ?? [],
+                                    groupInfo['showPhotos'])),
                           ],
                         );
                       }
@@ -409,27 +463,41 @@ class _ShowGroupState extends State<ShowGroup> {
     );
   }
 
-  Widget _buildList(BuildContext context, List<DocumentSnapshot>? snapshot, bool showPhotos) {
+  Widget _buildList(
+      BuildContext context, List<DocumentSnapshot>? snapshot, bool showPhotos) {
     if (snapshot != null && snapshot.isNotEmpty) {
-      var currentUser = snapshot.firstWhereOrNull((element) => element.id == widget.userId);
+      var currentUser =
+          snapshot.firstWhereOrNull((element) => element.id == widget.userId);
 
       if (currentUser != null) {
         var userInfo = currentUser.data() as Map<dynamic, dynamic>;
         var currentUserRole = userInfo['role'];
 
-        List<UserCard> usersCard = snapshot.map((data) => _buildListItem(context, data, currentUserRole, showPhotos)).toList();
+        List<UserCard> usersCard = snapshot
+            .map((data) =>
+                _buildListItem(context, data, currentUserRole, showPhotos))
+            .toList();
         usersCard.sort((a, b) => a.userOrder.compareTo(b.userOrder));
 
-        return ListView(padding: const EdgeInsets.only(top: 20.0), shrinkWrap: true, children: usersCard);
+        return ListView(
+            padding: const EdgeInsets.only(top: 20.0),
+            shrinkWrap: true,
+            children: usersCard);
       }
     }
 
     return const SizedBox.shrink();
   }
 
-  UserCard _buildListItem(BuildContext context, DocumentSnapshot snapshot, String currentUserRole, bool showPhoto) {
+  UserCard _buildListItem(BuildContext context, DocumentSnapshot snapshot,
+      String currentUserRole, bool showPhoto) {
     final user = GroupUser.fromSnapshot(snapshot);
 
-    return UserCard(user: user, groupId: widget.groupId, currentUserRole: currentUserRole, showPhoto: showPhoto, boldStyle: boldStyle);
+    return UserCard(
+        user: user,
+        groupId: widget.groupId,
+        currentUserRole: currentUserRole,
+        showPhoto: showPhoto,
+        boldStyle: boldStyle);
   }
 }

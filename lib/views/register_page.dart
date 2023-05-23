@@ -48,7 +48,8 @@ class _RegisterPage extends State<RegisterPage> {
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
-                      Image.asset("assets/register_info.png", height: MediaQuery.of(context).size.height / 2),
+                      Image.asset("assets/register_info.png",
+                          height: MediaQuery.of(context).size.height / 2),
                       const SizedBox(
                         height: 20,
                       ),
@@ -65,7 +66,8 @@ class _RegisterPage extends State<RegisterPage> {
                           padding: const EdgeInsets.all(20),
                           child: Form(
                               key: _formKey,
-                              onChanged: () => setState(() => _btnEnabled = _formKey.currentState!.validate()),
+                              onChanged: () => setState(() => _btnEnabled =
+                                  _formKey.currentState!.validate()),
                               child: TextFormField(
                                 maxLength: 20,
                                 controller: textFormFieldController,
@@ -74,9 +76,11 @@ class _RegisterPage extends State<RegisterPage> {
                       ElevatedButton(
                           onPressed: _btnEnabled
                               ? () async {
-                                  final username = textFormFieldController.text.trim();
+                                  final username =
+                                      textFormFieldController.text.trim();
 
-                                  await _storageService.writeSecureData(StorageItem('username', username));
+                                  await _storageService.writeSecureData(
+                                      StorageItem('username', username));
 
                                   if (context.mounted) {
                                     context.read<User>().setUsername(username);
@@ -84,7 +88,8 @@ class _RegisterPage extends State<RegisterPage> {
                                     Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const AllowPermissions(),
+                                          builder: (context) =>
+                                              const AllowPermissions(),
                                         ),
                                         (route) => false);
                                   }

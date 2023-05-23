@@ -48,7 +48,9 @@ class OnBoardingPageState extends State<Intro> {
       ),
       curve: Curves.fastLinearToSlowEaseIn,
       controlsMargin: const EdgeInsets.all(16),
-      controlsPadding: kIsWeb ? const EdgeInsets.all(12.0) : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+      controlsPadding: kIsWeb
+          ? const EdgeInsets.all(12.0)
+          : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
       // globalHeader: Align(
       //   alignment: Alignment.topCenter,
       //   child: SafeArea(
@@ -61,13 +63,15 @@ class OnBoardingPageState extends State<Intro> {
       pages: [
         PageViewModel(
           title: "Join a group to stay connected and safe",
-          body: "With ReGroup, you can easily join a group with your teacher and classmates to stay connected during your trip.",
+          body:
+              "With ReGroup, you can easily join a group with your teacher and classmates to stay connected during your trip.",
           image: _buildImage('onboarding-01.png'),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Real-time location tracking and safety notifications",
-          body: "ReGroup provides real-time location tracking for all group members using Bluetooth technology.",
+          body:
+              "ReGroup provides real-time location tracking for all group members using Bluetooth technology.",
           image: Image.asset(
             'assets/onboarding-02.png',
             width: 224,
@@ -76,7 +80,8 @@ class OnBoardingPageState extends State<Intro> {
         ),
         PageViewModel(
           title: 'Instant safety alerts',
-          body: "ReGroup sends you instant safety alerts if you stray from your group or if there are any safety concerns during your trip.",
+          body:
+              "ReGroup sends you instant safety alerts if you stray from your group or if there are any safety concerns during your trip.",
           image: _buildImage('onboarding-03.png'),
           decoration: pageDecoration,
         ),
