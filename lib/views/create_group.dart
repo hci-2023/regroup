@@ -57,20 +57,12 @@ class _CreateGroupState extends State<CreateGroup> {
         String? token = await FirebaseMessaging.instance.getToken();
 
         GroupRepository groupRepository = GroupRepository(deviceId);
-        await groupRepository.addGroup(Group(
-            groupId: deviceId,
-            type: _groupType.toShortString(),
-            showPhotos: showPhotos,
-            distance: _groupType == GroupType.gps ? _distance : null));
+        await groupRepository.addGroup(
+            Group(groupId: deviceId, type: _groupType.toShortString(), showPhotos: showPhotos, distance: _groupType == GroupType.gps ? _distance : null));
 
         UserRepository userRepository = UserRepository(deviceId);
-        await userRepository.addUser(GroupUser(
-            deviceId: deviceId,
-            username: username,
-            role: UserRole.owner.toShortString(),
-            lost: false,
-            userPhotoUrl: userPhotoUrl,
-            token: token));
+        await userRepository.addUser(
+            GroupUser(deviceId: deviceId, username: username, role: UserRole.owner.toShortString(), lost: false, userPhotoUrl: userPhotoUrl, token: token));
 
         response = true;
       }
@@ -78,10 +70,13 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
             title: Text(title),
             leading: BackButton(
-              color: Colors.white,
+              color: Colors.blue,
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -116,8 +111,7 @@ class _CreateGroupState extends State<CreateGroup> {
                               title: const Text('Types of groups'),
                               content: SingleChildScrollView(
                                   child: ListBody(children: const <Widget>[
-                                Text(
-                                    'The type of group you choose should depend on the distance you wish to have between group members.'),
+                                Text('The type of group you choose should depend on the distance you wish to have between group members.'),
                                 SizedBox(height: 16),
                                 Text(
                                     'You should choose a bluetooth type group if the maximum distance does not exceed 10 metres, otherwise if you need more distance choose a gps-based group.')
@@ -184,8 +178,7 @@ class _CreateGroupState extends State<CreateGroup> {
                                   title: const Text('How does it work?'),
                                   content: SingleChildScrollView(
                                       child: ListBody(children: const <Widget>[
-                                    Text(
-                                        'Set the maximum distance of group members, if exceeded alert the group.'),
+                                    Text('Set the maximum distance of group members, if exceeded alert the group.'),
                                   ])),
                                   actions: <Widget>[
                                     TextButton(
@@ -253,8 +246,7 @@ class _CreateGroupState extends State<CreateGroup> {
                 padding: const EdgeInsets.all(20),
                 child: ElevatedButton(
                   onPressed: () async {
-                    setState(() => _showLinearProgressIndicator =
-                        !_showLinearProgressIndicator);
+                    setState(() => _showLinearProgressIndicator = !_showLinearProgressIndicator);
                     bool response = await createGroup();
 
                     if (response) {
@@ -263,26 +255,24 @@ class _CreateGroupState extends State<CreateGroup> {
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (BuildContext context) => ShowGroup(
-                                    groupId: context.read<User>().deviceId,
-                                    userId: context.read<User>().deviceId)),
+                                builder: (BuildContext context) => ShowGroup(groupId: context.read<User>().deviceId, userId: context.read<User>().deviceId)),
                             (Route<dynamic> route) => false);
                       }
                     } else {
                       if (context.mounted) {
-                        showSnack(
-                            context, "It was not possible to create a group");
+                        showSnack(context, "It was not possible to create a group");
                       }
                     }
 
                     if (mounted) {
-                      setState(() => _showLinearProgressIndicator =
-                          !_showLinearProgressIndicator);
+                      setState(() => _showLinearProgressIndicator = !_showLinearProgressIndicator);
                     }
                   },
                   child: const Text('Create Group',
                       style: TextStyle(
                         fontSize: 20,
+                        fontFamily: 'Outfit',
+                        fontWeight: FontWeight.w400,
                         color: Colors.white,
                       )),
                 ),

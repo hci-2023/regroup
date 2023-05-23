@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.2.19
   provider: ^6.0.5
-  flutter_onboarding_slider: 1.0.8
+  introduction_screen: ^3.1.7
   flutter_secure_storage: ^8.0.0
   qr_code_scanner: ^1.0.1
   device_info_plus: 3.2.4
@@ -80,14 +80,15 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/intro_slide_1.png
-    - assets/intro_slide_2.png
-    - assets/intro_slide_3.png
+    - assets/onboarding-01.png
+    - assets/onboarding-02.png
+    - assets/onboarding-03.png
     - assets/register_info.png
     - assets/android12splash.png
     - assets/title_black.png
     - assets/share_logo.png
     - assets/profile.png
+    - assets/circle.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

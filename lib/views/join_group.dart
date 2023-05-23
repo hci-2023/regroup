@@ -60,10 +60,13 @@ class _JoinGroupState extends State<JoinGroup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(title),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          //title: Text(title),
           leading: BackButton(
-            color: Colors.white,
+            color: Colors.blue,
             onPressed: () {
               Navigator.pop(context);
             },
@@ -86,7 +89,7 @@ class _JoinGroupState extends State<JoinGroup> {
                   'Group id',
                   style: TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 trailing: IconButton(
@@ -117,8 +120,7 @@ class _JoinGroupState extends State<JoinGroup> {
                 padding: const EdgeInsets.all(20),
                 child: Form(
                   key: _formKey,
-                  onChanged: () => setState(
-                      () => _btnEnabled = _formKey.currentState!.validate()),
+                  onChanged: () => setState(() => _btnEnabled = _formKey.currentState!.validate()),
                   child: TextFormField(
                     controller: textFormFieldController,
                     validator: _validateGroupId,
@@ -127,8 +129,7 @@ class _JoinGroupState extends State<JoinGroup> {
                       border: const UnderlineInputBorder(),
                       filled: true,
                       suffixIcon: IconButton(
-                          icon: const Icon(Icons.qr_code_scanner,
-                              color: Colors.blue),
+                          icon: const Icon(Icons.qr_code_scanner, color: Colors.blue),
                           onPressed: () {
                             _navigateAndDisplaySelection(context);
                           }),
@@ -143,16 +144,12 @@ class _JoinGroupState extends State<JoinGroup> {
                 child: ElevatedButton(
                   onPressed: _btnEnabled
                       ? () async {
-                          setState(() => _showLinearProgressIndicator =
-                              !_showLinearProgressIndicator);
+                          setState(() => _showLinearProgressIndicator = !_showLinearProgressIndicator);
 
-                          Map<String, dynamic> groupInfo = await isValidGroup(
-                              int.parse(textFormFieldController.text));
+                          Map<String, dynamic> groupInfo = await isValidGroup(int.parse(textFormFieldController.text));
 
-                          await FirebaseMessaging.instance
-                              .setAutoInitEnabled(true);
-                          String? token =
-                              await FirebaseMessaging.instance.getToken();
+                          await FirebaseMessaging.instance.setAutoInitEnabled(true);
+                          String? token = await FirebaseMessaging.instance.getToken();
 
                           if (groupInfo.isNotEmpty) {
                             String groupId = groupInfo['groupId'];
@@ -162,17 +159,14 @@ class _JoinGroupState extends State<JoinGroup> {
                               File? userPhoto = context.read<User>().userPhoto;
                               String? userPhotoLink;
 
-                              if (groupInfo['showPhotos'] &&
-                                  userPhoto != null) {
-                                userPhotoLink =
-                                    await uploadPhoto(deviceId, userPhoto);
+                              if (groupInfo['showPhotos'] && userPhoto != null) {
+                                userPhotoLink = await uploadPhoto(deviceId, userPhoto);
                                 if (context.mounted) {
                                   context.read<User>().setUserPhoto(null);
                                 }
                               }
 
-                              UserRepository userRepository =
-                                  UserRepository(groupId);
+                              UserRepository userRepository = UserRepository(groupId);
                               await userRepository.addUser(GroupUser(
                                   deviceId: deviceId,
                                   username: username,
@@ -184,30 +178,19 @@ class _JoinGroupState extends State<JoinGroup> {
                               if (context.mounted) {
                                 await Navigator.pushAndRemoveUntil(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            ShowGroup(
-                                                groupId: groupId,
-                                                userId: context
-                                                    .read<User>()
-                                                    .deviceId)),
+                                    MaterialPageRoute(builder: (BuildContext context) => ShowGroup(groupId: groupId, userId: context.read<User>().deviceId)),
                                     (Route<dynamic> route) => false);
                               }
                             }
                           }
 
                           if (context.mounted) {
-                            setState(() => _showLinearProgressIndicator =
-                                !_showLinearProgressIndicator);
+                            setState(() => _showLinearProgressIndicator = !_showLinearProgressIndicator);
                             showSnack(context, "The group does not exist");
                           }
                         }
                       : null,
-                  child: const Text('Join Group',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                      )),
+                  child: const Text('Join Group', style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'Outfit', fontWeight: FontWeight.w400)),
                 ),
               ),
             ],
