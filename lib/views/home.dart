@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.account_circle_rounded),
             onPressed: () => Navigator.pushNamed(context, "/userProfile"),
           ),
-          iconTheme: const IconThemeData(color: Colors.blue),
+          iconTheme: const IconThemeData(color: Colors.blue, size:32),
           backgroundColor: Colors.white,
           elevation: 0,
           bottom: _showLinearProgressIndicator == true
@@ -156,15 +156,6 @@ class _HomePageState extends State<HomePage> {
                           width: MediaQuery.of(context).size.width * 1,
                           height: MediaQuery.of(context).size.height * 0.3,
                           fit: BoxFit.contain,
-                        ),
-                      ),
-                      const Align(
-                        alignment: AlignmentDirectional(-0.8, 0),
-                        child: AutoSizeText(
-                          'Welcome,',
-                          style: TextStyle(
-                              fontSize: 32, fontWeight: FontWeight.w600),
-                          maxLines: 2,
                         ),
                       ),
                     ],
