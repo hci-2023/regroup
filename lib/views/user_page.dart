@@ -13,7 +13,6 @@ class UserPage extends StatelessWidget {
         appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
-            //title: const Text(title),
             leading: BackButton(
               color: Colors.blue,
               onPressed: () {

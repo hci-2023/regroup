@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:regroup/views/register_page.dart';
 
 class AllowPermissions extends StatefulWidget {
   const AllowPermissions({Key? key}) : super(key: key);

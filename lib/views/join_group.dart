@@ -64,7 +64,6 @@ class _JoinGroupState extends State<JoinGroup> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          //title: Text(title),
           leading: BackButton(
             color: Colors.blue,
             onPressed: () {

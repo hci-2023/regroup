@@ -121,21 +121,17 @@ class _ShowGroupState extends State<ShowGroup> {
 
     var users = await userRepository.getUsers();
 
-    //inizia scansione
     startDiscovery().then((value) {
-      List finale = [actualName, results];
-      //print(finale);
       if (results.isNotEmpty) {
         invia();
       }
-      //fa partire la funzione che controlla che tutte le persone siano presenti
+
       if (isOwner) {
-        //print(groupRepository.docId);
         try {
           groupRepository.checkNeighbours(users);
-        } catch (_) {}
-
-        //print("vicini controllati");
+        } catch (_) {
+          // TODO: handle exception!
+        }
       }
       results = [];
     });
@@ -159,7 +155,6 @@ class _ShowGroupState extends State<ShowGroup> {
 
     //nome Dispositivo bluetooth
     FlutterBluetoothSerial.instance.name.then((name) {
-      print("____ ${name!}");
       actualName = name!;
     });
     //inizia scansione
@@ -316,53 +311,6 @@ class _ShowGroupState extends State<ShowGroup> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            /*
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Card(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  ),
-                                  child: SizedBox(
-                                      child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          groupInfo["type"] == GroupType.gps.toShortString() ? Icons.gps_fixed : Icons.bluetooth,
-                                          color: Colors.blue,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text(groupInfo["type"].toString().capitalize())
-                                      ],
-                                    ),
-                                  )),
-                                ),
-                                if (groupInfo["type"] == GroupType.gps.toShortString())
-                                  Card(
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    child: SizedBox(
-                                        child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.social_distance,
-                                            color: Colors.blue,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text('${groupInfo["distance"].toString()} m')
-                                        ],
-                                      ),
-                                    )),
-                                  )
-                              ],
-                            ),
-                            const SizedBox(height: 25),
-                            */
                             AbsorbPointer(
                               absorbing: !isOwner && userInfo['lost'],
                               child: ElevatedButton(

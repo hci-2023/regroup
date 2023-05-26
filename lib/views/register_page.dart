@@ -4,8 +4,7 @@ import 'package:regroup/models/secure_local_storage.dart';
 import 'package:regroup/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:regroup/views/allow_permissions.dart';
-
-import '../utils.dart';
+import 'package:regroup/utils.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);

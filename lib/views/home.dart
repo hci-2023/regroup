@@ -1,21 +1,15 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:provider/provider.dart';
 
 import 'package:regroup/services/secure_local_storage.dart';
 import 'package:regroup/models/secure_local_storage.dart';
-
 import 'package:regroup/providers/user_provider.dart';
 import 'package:regroup/services/device_information.dart';
-
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
 import 'package:regroup/services/firebase_utils.dart';
 import 'package:regroup/utils.dart';
-
 import 'package:regroup/views/show_group.dart';
 
 class HomePage extends StatefulWidget {
@@ -59,8 +53,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     String? usernameResponse = await _storageService.readSecureData('username');
-
-    //await Future.delayed(const Duration(seconds: 1));
     FlutterNativeSplash.remove();
 
     if (usernameResponse == null) {
@@ -72,17 +64,6 @@ class _HomePageState extends State<HomePage> {
         context.read<User>().setUsername(usernameResponse);
       }
     }
-
-    NotificationSettings settings =
-        await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
 
     await _bluetooth.requestPermissions();
 
