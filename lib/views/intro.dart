@@ -51,15 +51,6 @@ class OnBoardingPageState extends State<Intro> {
       controlsPadding: kIsWeb
           ? const EdgeInsets.all(12.0)
           : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
-      // globalHeader: Align(
-      //   alignment: Alignment.topCenter,
-      //   child: SafeArea(
-      //     child: Padding(
-      //       padding: const EdgeInsets.only(top: 16, right: 16),
-      //       child: _buildImage('regroup.png', 128),
-      //     ),
-      //   ),
-      // ),
       pages: [
         PageViewModel(
           title: "Join a group to stay connected and safe",

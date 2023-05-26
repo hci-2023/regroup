@@ -42,36 +42,36 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        child: ListTile(
-      leading: Row(mainAxisSize: MainAxisSize.min, children: [
-        _getUserIcon(context),
-        const SizedBox(width: 14),
-        Icon(
-          user.isLost ? Icons.bluetooth_disabled : Icons.bluetooth_connected,
-          color: user.isLost ? Colors.red : Colors.blue,
-          size: 24.0,
-        )
-      ]),
-      title: Text(user.username),
-      subtitle: Text(user.role.capitalize()),
-      trailing: currentUserRole == UserRole.owner.toShortString() &&
-                  user.role != UserRole.owner.toShortString() ||
-              currentUserRole == UserRole.moderator.toShortString() &&
-                  user.role == UserRole.participant.toShortString()
-          ? PopupMenuButton<SampleItem>(
-              icon: const Icon(
-                Icons.more_vert,
-                color: Colors.blueAccent,
-              ),
-              initialValue: selectedMenu,
-              // Callback that sets the selected popup menu item.
-              onSelected: (SampleItem item) {
-                selectedMenu = item;
-              },
-              itemBuilder: (BuildContext context) => _getMenuEntry(user))
-          : null,
-      //shape: user.isLost ? Border(top: BorderSide(color: Colors.redAccent, width: 3), bottom: BorderSide(color: Colors.redAccent, width: 3)) : null
-    ));
+      child: ListTile(
+        leading: Row(mainAxisSize: MainAxisSize.min, children: [
+          _getUserIcon(context),
+          const SizedBox(width: 14),
+          Icon(
+            user.isLost ? Icons.bluetooth_disabled : Icons.bluetooth_connected,
+            color: user.isLost ? Colors.red : Colors.blue,
+            size: 24.0,
+          )
+        ]),
+        title: Text(user.username),
+        subtitle: Text(user.role.capitalize()),
+        trailing: currentUserRole == UserRole.owner.toShortString() &&
+                    user.role != UserRole.owner.toShortString() ||
+                currentUserRole == UserRole.moderator.toShortString() &&
+                    user.role == UserRole.participant.toShortString()
+            ? PopupMenuButton<SampleItem>(
+                icon: const Icon(
+                  Icons.more_vert,
+                  color: Colors.blueAccent,
+                ),
+                initialValue: selectedMenu,
+                // Callback that sets the selected popup menu item.
+                onSelected: (SampleItem item) {
+                  selectedMenu = item;
+                },
+                itemBuilder: (BuildContext context) => _getMenuEntry(user))
+            : null,
+      ),
+    );
   }
 
   List<PopupMenuEntry<SampleItem>> _getMenuEntry(GroupUser user) {
@@ -127,7 +127,7 @@ class UserCard extends StatelessWidget {
           backgroundImage: NetworkImage(user.userPhotoUrl!),
           radius: 24.0,
         ),
-      ); //CircleAvatar
+      );
     } else if (user.role == 'owner') {
       userIcon = IconButton(
         iconSize: 30.0,
