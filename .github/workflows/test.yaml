@@ -1,0 +1,37 @@
+name: Flutter Test and Analyze
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions: read-all
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: "☁️ checkout code"
+        uses: actions/checkout@v3
+
+      - name: "🔧 set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: "📦 install dependencies"
+        run: flutter pub get
+
+      - name: "🔍 analyze the project's Dart code"
+        run: flutter analyze
+
+      - name: "🔍 ensure the Dart code is formatted correctly"
+        run: dart format --set-exit-if-changed .
+
+      - name: "🔍 run Flutter tests"
+        run: flutter test --coverage
