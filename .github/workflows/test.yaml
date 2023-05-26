@@ -1,11 +1,7 @@
-name: Flutter Test and Analyze
+name: Test
 on:
   pull_request:
-    types:
-      - opened
-      - edited
-      - synchronize
-      - reopened
+  workflow_call:
 
 permissions: read-all
 
