@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: read-all
+
+jobs:
+  test:
+    uses: hci-2023/regroup-proto/.github/workflows/test.yaml@main
+
+  build:
+    name: Build Android application
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: test
+    steps:
+      - name: "☁️ checkout code"
+        uses: actions/checkout@v3
+
+      - name: "🔧 set up JDK"
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: "🔧 set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: "🚀 build Android APK"
+        run: flutter build apk --debug
+
+      - name: "📂 upload artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 5
