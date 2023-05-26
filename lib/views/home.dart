@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.account_circle_rounded),
             onPressed: () => Navigator.pushNamed(context, "/userProfile"),
           ),
-          iconTheme: const IconThemeData(color: Colors.blue, size:32),
+          iconTheme: const IconThemeData(color: Colors.blue, size: 32),
           backgroundColor: Colors.white,
           elevation: 0,
           bottom: _showLinearProgressIndicator == true
