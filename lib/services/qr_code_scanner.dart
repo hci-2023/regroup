@@ -40,7 +40,10 @@ class _QRViewState extends State<QRReader> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(flex: 10, child: _buildQrView(context)),
+          Expanded(
+            flex: 10,
+            child: _buildQrView(context),
+          ),
           Expanded(
             flex: 1,
             child: FittedBox(
@@ -52,20 +55,19 @@ class _QRViewState extends State<QRReader> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
-                              builder: (context, snapshot) {
-                                return Text(
-                                  'Flash: ${snapshot.data != null && snapshot.data == true ? "on" : "off"}',
-                                );
-                              },
-                            )),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await controller?.toggleFlash();
+                          setState(() {});
+                        },
+                        child: FutureBuilder(
+                          future: controller?.getFlashStatus(),
+                          builder: (context, snapshot) {
+                            return Text(
+                              'Flash: ${snapshot.data != null && snapshot.data == true ? "on" : "off"}',
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -118,7 +120,7 @@ class _QRViewState extends State<QRReader> {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('no Permission')),
+        const SnackBar(content: Text('Permission not granted')),
       );
     }
   }
