@@ -43,6 +43,7 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // TODO: Remove the following hard-coded options before release.
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBJnHV9rsBXVIwP4JKyOtqi54ovpz0FP-w',
     appId: '1:519595634736:web:87bcf2618856fa50c7bdf5',
