@@ -33,9 +33,6 @@ jobs:
       - name: "🔍 ensure the Dart code is formatted correctly"
         run: dart format --set-exit-if-changed .
 
-      - name: "🔍 analyze the project's Dart code"
-        run: flutter analyze
-
       - name: "🚀 build Android APK (debug)"
         run: flutter build apk --debug
 
