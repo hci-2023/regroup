@@ -1,0 +1,49 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+workflow_call:
+permissions: read-all
+
+jobs:
+  release-apk:
+    name: Release Android application
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: "☁️ checkout code"
+        uses: actions/checkout@v3
+
+      - name: "🔧 set up JDK"
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: "🔧 set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: "📦 install dependencies"
+        run: flutter pub get
+
+      - name: "🔍 ensure the Dart code is formatted correctly"
+        run: dart format --set-exit-if-changed .
+
+      - name: "🔍 analyze the project's Dart code"
+        run: flutter analyze
+
+      - name: "🚀 build Android APK"
+        run: flutter build apk
+
+      - name: "📂 upload artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: app.apk
+          path: build/app/outputs/flutter-apk/app.apk
+          retention-days: 5
