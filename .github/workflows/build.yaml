@@ -1,21 +1,15 @@
 name: Build
-
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+  workflow_call:
 
 permissions: read-all
 
 jobs:
-  test:
-    uses: hci-2023/regroup-proto/.github/workflows/test.yaml@main
-
-  build:
+  build-apk:
     name: Build Android application
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: test
     steps:
       - name: "☁️ checkout code"
         uses: actions/checkout@v3
@@ -33,7 +27,16 @@ jobs:
           channel: stable
           cache: true
 
-      - name: "🚀 build Android APK"
+      - name: "📦 install dependencies"
+        run: flutter pub get
+
+      - name: "🔍 ensure the Dart code is formatted correctly"
+        run: dart format --set-exit-if-changed .
+
+      - name: "🔍 analyze the project's Dart code"
+        run: flutter analyze
+
+      - name: "🚀 build Android APK (debug)"
         run: flutter build apk --debug
 
       - name: "📂 upload artifact"
