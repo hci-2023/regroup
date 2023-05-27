@@ -98,8 +98,8 @@ class _JoinGroupState extends State<JoinGroup> {
                         context: context,
                         builder: (context) => AlertDialog(
                               title: const Text("Insert the group id"),
-                              content: SingleChildScrollView(
-                                  child: ListBody(children: const <Widget>[
+                              content: const SingleChildScrollView(
+                                  child: ListBody(children: <Widget>[
                                 Text(
                                     "If you don't have the id, ask the group creator or a member within the group, you could also automatically enter the id by scanning the QR code provided to group members.")
                               ])),
