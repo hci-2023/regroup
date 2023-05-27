@@ -195,8 +195,8 @@ class _ShowGroupState extends State<ShowGroup> {
                   context: context,
                   builder: (context) => AlertDialog(
                         title: const Text('Leave the group'),
-                        content: SingleChildScrollView(
-                            child: ListBody(children: const <Widget>[
+                        content: const SingleChildScrollView(
+                            child: ListBody(children: <Widget>[
                           Text(
                               'In order to return to the previous screen, you must first leave or delete the group.')
                         ])),

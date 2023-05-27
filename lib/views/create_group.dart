@@ -117,8 +117,8 @@ class _CreateGroupState extends State<CreateGroup> {
                         context: context,
                         builder: (context) => AlertDialog(
                               title: const Text('Types of groups'),
-                              content: SingleChildScrollView(
-                                  child: ListBody(children: const <Widget>[
+                              content: const SingleChildScrollView(
+                                  child: ListBody(children: <Widget>[
                                 Text(
                                     'The type of group you choose should depend on the distance you wish to have between group members.'),
                                 SizedBox(height: 16),
@@ -185,8 +185,8 @@ class _CreateGroupState extends State<CreateGroup> {
                             context: context,
                             builder: (context) => AlertDialog(
                                   title: const Text('How does it work?'),
-                                  content: SingleChildScrollView(
-                                      child: ListBody(children: const <Widget>[
+                                  content: const SingleChildScrollView(
+                                      child: ListBody(children: <Widget>[
                                     Text(
                                         'Set the maximum distance of group members, if exceeded alert the group.'),
                                   ])),

@@ -179,11 +179,11 @@ class _ProfileWidgetState extends State<Profile> {
                 ),
                 Align(
                   alignment: const AlignmentDirectional(0, 0),
-                  child: Container(
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.73,
                     child: Stack(
                       children: [
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width * 0.73,
                           child: Form(
                             key: _formKey,
