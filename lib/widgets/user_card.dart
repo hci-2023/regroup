@@ -5,6 +5,8 @@ import 'package:regroup/repository/user_repository.dart';
 
 enum SampleItem { kickUser, promoteUser, demoteUser }
 
+// TODO: consider if this class should be immutable or not.
+// ignore: must_be_immutable
 class UserCard extends StatelessWidget {
   final GroupUser user;
   final String groupId;
@@ -43,15 +45,20 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Row(mainAxisSize: MainAxisSize.min, children: [
-          _getUserIcon(context),
-          const SizedBox(width: 14),
-          Icon(
-            user.isLost ? Icons.bluetooth_disabled : Icons.bluetooth_connected,
-            color: user.isLost ? Colors.red : Colors.blue,
-            size: 24.0,
-          )
-        ]),
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _getUserIcon(context),
+            const SizedBox(width: 14),
+            Icon(
+              user.isLost
+                  ? Icons.bluetooth_disabled
+                  : Icons.bluetooth_connected,
+              color: user.isLost ? Colors.red : Colors.blue,
+              size: 24.0,
+            )
+          ],
+        ),
         title: Text(user.username),
         subtitle: Text(user.role.capitalize()),
         trailing: currentUserRole == UserRole.owner.toShortString() &&
@@ -68,7 +75,8 @@ class UserCard extends StatelessWidget {
                 onSelected: (SampleItem item) {
                   selectedMenu = item;
                 },
-                itemBuilder: (BuildContext context) => _getMenuEntry(user))
+                itemBuilder: (BuildContext context) => _getMenuEntry(user),
+              )
             : null,
       ),
     );
@@ -84,21 +92,27 @@ class UserCard extends StatelessWidget {
     ];
 
     if (user.role == UserRole.participant.toShortString()) {
-      entries.add(PopupMenuItem<SampleItem>(
+      entries.add(
+        PopupMenuItem<SampleItem>(
           value: SampleItem.promoteUser,
           child: const Text('Promote to moderator'),
           onTap: () {
             user.promote();
             userRepository.updateUser(user);
-          }));
+          },
+        ),
+      );
     } else if (user.role == UserRole.moderator.toShortString()) {
-      entries.add(PopupMenuItem<SampleItem>(
+      entries.add(
+        PopupMenuItem<SampleItem>(
           value: SampleItem.demoteUser,
           child: const Text('Demote to participant'),
           onTap: () {
             user.demote();
             userRepository.updateUser(user);
-          }));
+          },
+        ),
+      );
     }
 
     return entries;
@@ -110,18 +124,19 @@ class UserCard extends StatelessWidget {
       userIcon = GestureDetector(
         onTap: () {
           showDialog(
-              context: context,
-              builder: (_) => GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Dialog(
-                      child: Image.network(
-                        user.userPhotoUrl!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ));
+            context: context,
+            builder: (_) => GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Dialog(
+                child: Image.network(
+                  user.userPhotoUrl!,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          );
         },
         child: CircleAvatar(
           backgroundImage: NetworkImage(user.userPhotoUrl!),
