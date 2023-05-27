@@ -9,7 +9,7 @@ jobs:
   build-apk:
     name: Build Android application
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: "☁️ checkout code"
         uses: actions/checkout@v3

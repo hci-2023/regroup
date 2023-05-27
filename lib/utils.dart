@@ -36,6 +36,7 @@ Future<String?> uploadPhoto(String userId, File image) async {
   final userPhotoRef = storageRef.child("images/$userId.jpg");
 
   try {
+    await userPhotoRef.putFile(image);
     photoUrl = await userPhotoRef.getDownloadURL();
   } catch (error) {
     debugPrint("[uploadPhoto] failed: ${error.toString()}}");
