@@ -56,11 +56,12 @@ class _ShowGroupState extends State<ShowGroup> {
     var timerDiscovery =
         Timer.periodic(const Duration(seconds: 5), (timer) async {
       var response = await FlutterBluetoothSerial.instance.isDiscovering;
+
       setState(() {
         status = response;
       });
+
       if (response != null && !response) {
-        print("INIT");
         restartDiscovery();
       }
     });
@@ -73,10 +74,9 @@ class _ShowGroupState extends State<ShowGroup> {
         userInfo = snapshot.data() as Map<String, dynamic>;
       }
     }, onError: (error) {
-      //print(error);
-    }, onDone: () {
-      //print('Stream closed!');
-    });
+      debugPrint(
+          "[_ShowGroupState] failed to get user stream: ${error.toString()}}");
+    }, onDone: () {});
 
     FlutterBluetoothSerial.instance.state.then((state) {
       _bluetoothState = state;
@@ -105,7 +105,6 @@ class _ShowGroupState extends State<ShowGroup> {
   }
 
   void name() async {
-    //abilita bluetooth se è disabilitato
     if (!_bluetoothState.isEnabled) {
       await FlutterBluetoothSerial.instance.requestEnable();
     }
@@ -113,7 +112,6 @@ class _ShowGroupState extends State<ShowGroup> {
     await FlutterBluetoothSerial.instance.changeName(widget.userId);
   }
 
-  // inizia scansione e stampa risultati
   void restartDiscovery() async {
     name();
 
@@ -135,8 +133,6 @@ class _ShowGroupState extends State<ShowGroup> {
       }
       results = [];
     });
-    //aspetta la fine della scansione
-    //await Future.delayed(const Duration(seconds: 15));
   }
 
   Future<void> startDiscovery() async {
@@ -146,18 +142,14 @@ class _ShowGroupState extends State<ShowGroup> {
       return;
     }
 
-    //attiva bluetooth se disattivato
     if (!_bluetoothState.isEnabled) {
       await FlutterBluetoothSerial.instance.requestEnable();
     }
 
-    //await FlutterBluetoothSerial.instance.cancelDiscovery();
-
-    //nome Dispositivo bluetooth
     FlutterBluetoothSerial.instance.name.then((name) {
       actualName = name!;
     });
-    //inizia scansione
+
     _streamSubscription =
         FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
       final existingIndex = rawResults
@@ -168,24 +160,20 @@ class _ShowGroupState extends State<ShowGroup> {
         rawResults.add(r);
       }
 
-      //aggiunge i dispositivi vicini a results
-      //TODO aggiungere solo i dispositivi nel gruppo
       if (r.device.name != null) {
         results.add(r.device.name);
       }
     });
 
-    //scansione terminata
     _streamSubscription!.onDone(() async {
-      //await FlutterBluetoothSerial.instance.cancelDiscovery();
-      print("scansione terminata");
+      debugPrint("[_ShowGroupState] startDiscovery done!");
     });
   }
 
   void invia() {
     final dato = <String, dynamic>{"nome": actualName, "vicini": results};
+
     userDataRepository.addUserData(widget.userId, dato);
-    print("Inviato");
   }
 
   bool _showLinearProgressIndicator = true;
@@ -198,7 +186,6 @@ class _ShowGroupState extends State<ShowGroup> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          //title: Text(title),
           elevation: 0,
           backgroundColor: Colors.white,
           leading: BackButton(

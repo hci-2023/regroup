@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:regroup/models/group.dart';
@@ -29,10 +30,9 @@ class GroupRepository {
           .call({"path": path});
     } on FirebaseFunctionsException catch (error) {
       success = false;
-      print("[deleteGroup] Delete failed");
-      print(error.code);
-      print(error.details);
-      print(error.message);
+      debugPrint(
+        "[GroupRepository] failed to delete group: ${error.toString()}}",
+      );
     }
 
     return success;

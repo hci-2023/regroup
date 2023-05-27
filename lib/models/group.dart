@@ -15,19 +15,20 @@ class Group {
   final bool showPhotos;
   double? distance;
 
-  Group(
-      {required this.groupId,
-      required this.type,
-      required this.showPhotos,
-      this.distance})
-      : accessIdentifier = groupIdToIdentifier(groupId);
+  Group({
+    required this.groupId,
+    required this.type,
+    required this.showPhotos,
+    this.distance,
+  }) : accessIdentifier = groupIdToIdentifier(groupId);
 
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
-        groupId: json['groupId'],
-        type: json["type"],
-        showPhotos: json["showPhotos"],
-        distance: json.containsKey('distance') ? json["distance"] : null);
+      groupId: json['groupId'],
+      type: json["type"],
+      showPhotos: json["showPhotos"],
+      distance: json.containsKey('distance') ? json["distance"] : null,
+    );
   }
 
   Map<String, dynamic> toJson() => _toJson();

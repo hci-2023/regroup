@@ -38,8 +38,7 @@ Future<String?> uploadPhoto(String userId, File image) async {
   try {
     photoUrl = await userPhotoRef.getDownloadURL();
   } catch (error) {
-    print("[uploadPhoto] photo cannot be uploaded or obtain the download url");
-    print("error: $error");
+    debugPrint("[uploadPhoto] failed: ${error.toString()}}");
   }
 
   return photoUrl;
@@ -53,9 +52,6 @@ Future<void> deletePhoto(String userId) async {
   try {
     await userPhotoRef.delete();
   } catch (error) {
-    print(
-        "[deletePhoto] the photo cannot at the following path cannot be deleted");
-    print("path: $photoPath");
-    print("error: $error");
+    debugPrint("[deletePhoto] failed: ${error.toString()}}");
   }
 }
