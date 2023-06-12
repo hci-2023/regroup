@@ -1,0 +1,34 @@
+\section{Development}
+The end goal of the project was to develop a mobile application. We decided to implement it using the Flutter framework developed by Google. Although the framework permits cross-platform development, we decided to concentrate only on Android devices. The application allows the user to create and share a group with other users by monitoring each member's location.
+% \subsection{Implementation Details}
+
+\subsubsection*{Onboarding}
+To guide users through the ReGroup features and to create a positive first impression, an onboarding screen consisting of three slides is shown to the new users. At the end of the onboarding process, the user is encouraged to create an account by entering only the username. We aim to streamline the registration procedure by eliminating the need for users to enter an email address or password. It is important to note that the uniqueness of a member within a specific group is ensured through the relationship between the group and device identifiers. Finally, the application initiates by displaying a list of permissions (camera, notifications, Bluetooth) that it needs to function correctly. Upon the user selecting ``Allow Permissions'', an approval request is triggered for notifications and Bluetooth permissions. If Bluetooth is turned off, an additional pop-up prompts the user to enable it. With the permissions granted, users are now directed to the home screen, where they can either create a new group or join an existing one.
+
+\subsubsection*{Roles}
+The mobile application features an organized approach to role assignment, allowing users to assume specific roles based on their actions within a group.
+
+\begin{itemize}
+\item \textbf{Owner:} Users automatically become the owner when they create a group. As the owner, they have complete control and authority over the group. This includes promoting or demoting participants to the moderator role, removing members from the group, and deleting the entire group if necessary. The owner plays a pivotal role in group management and decision-making.
+
+\item \textbf{Moderator:} The group owner can elevate participants to the moderator role. Moderators have certain privileges within the group, allowing them to assist in maintaining order and enforcing group guidelines. A unique feature of the moderator role is temporarily stepping away from the group without generating notifications, offering flexibility while ensuring their presence and engagement.
+
+\item \textbf{Participant:} The participant role is assigned to every user upon joining a group. To ensure the safety and cohesion of the group, participants can only leave if their location is not marked as lost. This restriction guarantees that members remain actively engaged and connected, fostering a sense of security and accountability within the group.
+\end{itemize}
+
+\newpage
+\subsubsection*{Create Group}
+After the user clicks on the create group, he becomes the group owner, and he decides if the profile picture of each member will be displayed or not.  Then the group gets an ID that can be shared with other users to make them join the group through a QR code.
+
+\subsubsection*{Join Group}
+Users can manually enter the group identifier or conveniently scan the QR code to join a group. However, if a user has previously denied camera permissions, a popup will appear when attempting to scan the QR code, prompting them to grant the necessary permissions. Once a user joins a group, every five seconds, the application initiates an automatic Bluetooth scan lasting around 20 to 30 seconds to detect nearby group members. If Bluetooth is disabled, a popup will be displayed, requesting the user to enable it. Upon completion of the neighbour scan, the list of detected neighbours is securely stored in the remote database.
+
+\subsubsection*{Cloud Functions}
+\begin{itemize}
+    \item \emph{RecursiveDelete}: This function serves as a comprehensive deletion mechanism within the application. When invoked, it systematically removes an entire group, including all associated user accounts and their respective personal data. This includes sensitive information such as private photos and the list of neighbours, ensuring a thorough cleanup process.
+    \item \emph{CheckNeighbours}: This function lies at the heart of the application's core operations. Its primary objective is to continuously evaluate the neighbour lists associated with each group member, ensuring the overall well-being and security of the group. In addition, if a participant becomes lost, this function takes immediate action by notifying all group members and fostering a collaborative response to locate and support the missing individual.
+\end{itemize}
+
+\section{Testing}
+The mobile application underwent iterative user testing throughout the development process to ensure a seamless user experience. This iterative approach aimed to identify and address any potential issues with interaction flow and to anticipate a wide range of user requests, thereby enhancing the overall usability and functionality of the application.
+A range of testing scenarios was devised to evaluate the application's suitability for teachers and students. Unfortunately, not being able to directly install the application on the teachers' and students' phones, the development team had to create and simulate testing scenarios as close as possible to an actual use case, i.e. participating in a school trip. These scenarios encompassed critical actions, including registration, group creation and joining, Bluetooth scanning, notifications, role management, and group deletion. In addition, the application's performance was rigorously assessed by simulating these scenarios during testing, ensuring it effectively addressed teachers' unique requirements and objectives. Finally, ensuring data integrity and privacy was a key focus during the development phase. While the number of parents with data-related concerns was small, the development team diligently verified the proper handling and deletion of data about group members. This encompassed sensitive information such as current location and images, which were securely managed and deleted when a group was disbanded.
