@@ -1,0 +1,48 @@
+\documentclass[10pt,a4paper]{article}
+
+% Fonts
+\usepackage{fontspec}
+% \setmainfont{Palatino Linotype}
+\setsansfont{Arial}
+
+% Page margins
+\usepackage[a4paper,margin=1in]{geometry}
+
+% Line spacing
+\usepackage{setspace}
+\onehalfspacing
+
+% Justified composition
+\usepackage{ragged2e}
+\justifying
+
+% Other packages
+\usepackage{hyperref}
+\usepackage{authblk}
+
+\begin{document}
+
+\title{Report on the ``ReGroup'' mobile application}
+\author[1]{Simone Ruberto}
+\author[1]{Marco Rotiroti}
+\author[1]{Riccardo Ruberto}
+\author[1]{Vladimiro Paschali}
+\author[1]{Gianluca Vannoli}
+\affil[1]{Sapienza University of Rome}
+
+\date{\today}
+
+\maketitle
+\tableofcontents
+
+\newpage
+
+\include{goal}
+\include{competitors}
+\include{teachers}
+\include{parents}
+\include{prototyping}
+\include{development}
+\include{conclusions}
+
+\end{document}

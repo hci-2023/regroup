@@ -1,0 +1,142 @@
+\documentclass[10pt,a4paper]{article}
+
+% Fonts
+\usepackage{fontspec}
+% \setmainfont{Palatino Linotype}
+\setsansfont{Arial}
+
+% Page margins
+\usepackage[a4paper,margin=1in]{geometry}
+
+% Line spacing
+\usepackage{setspace}
+\onehalfspacing
+
+% Justified composition
+\usepackage{ragged2e}
+\justifying
+
+% Other packages
+\usepackage{hyperref}
+\usepackage{authblk}
+
+\begin{document}
+
+\title{Prototyping ``ReGroup'' mobile application}
+\author[1]{Simone Ruberto}
+\author[1]{Marco Rotiroti}
+\author[1]{Riccardo Ruberto}
+\author[1]{Vladimiro Paschali}
+\author[1]{Gianluca Vannoli}
+\affil[1]{Sapienza University of Rome}
+
+\date{\today}
+
+\maketitle
+
+\section*{Create a profile picture}
+Suppose you are in a museum with other participants. \\
+The visit will start in a few minutes, and your teacher will create a new group. \\
+You must be ready to join the group by setting up your profile picture.
+\subsection*{Version 1}
+\begin{itemize}
+    \item \textbf{Tests and Problems}
+    \begin{itemize}
+    \item The incomprehensible interface button and the profile and settings screen confused users about the right one to set up the image.
+    \end{itemize}
+    \item \textbf{Resolution}
+    \begin{itemize}
+        \item Merge the two screens into the profile screen only and change its icon into a self-explanatory one.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Version 2}
+\begin{itemize}
+    \item \textbf{Tests and Problems}
+    \begin{itemize}
+        \item The profile icon was too small.  
+    \end{itemize}
+    \item \textbf{Positive Aspects}
+    \begin{itemize}
+        \item The profile icon understood when seen.
+    \end{itemize}    
+    \item \textbf{Resolution}
+    \begin{itemize}
+        \item Resize the profile icon
+        \item Lighten screens by changing the colour and making them more minimalist.
+    \end{itemize}
+\end{itemize}
+
+\newpage
+\section*{Create a group}
+Suppose you want to create a group. \\
+You want to hide the profile picture of the group's members.
+\subsection*{Version 1}
+\begin{itemize}
+    \item \textbf{Tests and Problems}
+    \begin{itemize}
+        \item Difficulty in clicking the button for creating the group.
+        \item Lack of a setting to show/hide participants' photos.
+        \item Users are confused by the non-clickable GPS button.
+    \end{itemize}
+    \item \textbf{Resolution}
+    \begin{itemize}
+        \item Replace the big Material Design card with a button.    
+        \item Introduce an option to toggle the visibility of participant photos in the group creation process.
+        \item Simplify the user experience by excluding the step that involves selecting between Bluetooth and GPS technology.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Version 2}
+\begin{itemize}
+    \item \textbf{Tests and Problems}
+    \begin{itemize}
+        \item Oversized group creation button.
+        \item Complex screen layout and too bright colours.
+    \end{itemize}
+    \item \textbf{Resolution}
+    \begin{itemize}
+        \item Reduce the size of the group creation button to enhance usability.
+        \item Improve user understanding and ease of navigation by simplifying the layout of the screen.
+    \end{itemize}
+\end{itemize}
+
+\newpage
+\section*{Join a group}
+Suppose your teacher created a group. \\
+She provided the information to join the group. \\
+You want to join the group in the shortest possible time.
+\subsection*{Version 1}
+\begin{itemize}
+    \item \textbf{Tests and Problems}
+    \begin{itemize}
+        \item Group identifier too long.
+        \item Users are confused by the non-clickable GPS button.
+    \end{itemize}
+    \item \textbf{Resolution}
+    \begin{itemize}
+        \item Implemented a new algorithm for generating the group identifier.
+        \item Removed the step that involves clicking on the GPS button.                
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Version 2}
+\begin{itemize}
+    \item \textbf{Tests and Problems}
+    \begin{itemize}
+        \item The group identifier still needs to be entered by the user manually.        
+        \item Low contrast between the background color and other components on the screen.
+    \end{itemize}
+    \item \textbf{Positive Aspects}
+    \begin{itemize}
+        \item Reduced length of the group identifier.
+        \item Shortened the duration for entering the group identifier manually.
+    \end{itemize}
+    \item \textbf{Resolution}
+    \begin{itemize}
+        \item Replaced the screen background colour.
+        \item Group identifiers can now be manually entered or scanned using a QR Code.
+    \end{itemize}
+\end{itemize}
+
+\end{document}
