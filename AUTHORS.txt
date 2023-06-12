@@ -1,0 +1,7 @@
+# This is the official list of ReGroup authors.
+
+Simone Ruberto
+Marco Rotiroti
+Riccardo Ruberto
+Vladimiro Paschali 
+Gianluca Vannoli
